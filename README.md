@@ -8,14 +8,36 @@ At the moment only works for Germany.
 
 Takes day-ahead forecasts for wind, solar and load.
 
-Dispatched a future energy system with wind, solar, batteries and
-hydrogen storage to meet today's load.
+Dispatches a future energy system with wind, solar, batteries and
+hydrogen storage to meet today's load. Capacities for the future are
+fixed in advance.
+
+The dispatch is myopic over the next 24 hours. The long-term hydrogen
+storage is dispatched using a constant hydrogen value (e.g. 70 €/MWh).
+
+Outputs include:
+
+- Dispatch
+- States of charge for battery and hydrogen storage
+- Prices
+- Bidding curves
+
+There are some strong assumptions and limitations:
+
+- Germany is an island system with no connection to neighbours
+- Hydro and biomass are not yet modelled
+- Balancing reserves are ignored
+- Internal grid constraints and redispatch is ignored
+- Future climate change is ignored
+
 
 Future plans:
 
 - Extend to other countries with interconnectors
 - Include newly-electrified loads (electric vehicles, heat pumps, industry electrification, P2X)
 - Include demand-side management
+- Include existing hydroelectricity
+- Include other storage technologies (iron-air batteries, methanol, ammonia, etc.)
 
 ## Installation
 
@@ -38,10 +60,16 @@ Then run
 	python solve_myopic.py
 
 
+## Other websites that served as an inspiration
+
+- [energy-charts REMod scenarios](https://www.energy-charts.info/charts/remod_installed_power/chart.htm?l=en&c=DE) (not live)
+- [David Osmond simulations for Australia](https://reneweconomy.com.au/a-near-100-per-cent-renewables-grid-is-well-within-reach-and-with-little-storage/)
+- [Agora future-o-meter for Germany](https://www.agora-energiewende.de/service/agorameter/chart/future_compare/07.07.2023/07.08.2023/future/2040/)
+
 
 ## License
 
-Copyright 2018-2023 Tom Brown <https://nworbmot.org/>
+Copyright 2023 Tom Brown <https://nworbmot.org/>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
