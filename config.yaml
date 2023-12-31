@@ -1,0 +1,84 @@
+
+
+scenario: voll1000
+
+results_dir: myopic
+
+start_date: 2023-01-01
+end_date: 2023-12-30
+
+countries: [DE]
+
+time_zone:
+  DE: Europe/Berlin
+
+vre_techs: [pv, onshore, offshore]
+
+# load-shedding in EUR/MWh
+voll: 1000.
+
+# constant value of H2 in EUR/MWh
+hydrogen_value: 60.
+
+# extend last hour so no end-of-horizon effects
+extended_hours: 6
+
+# in MWh
+soc_start:
+  DE:
+    battery_energy: 5.0e3
+    hydrogen_energy: 5.0e7
+
+
+# in GW or GWh
+future_capacities:
+  DE:
+    onshore : 220
+    pv : 400
+    offshore : 0
+    battery : 300
+    battery_energy : 500
+    hydrogen_electrolyser : 65
+    hydrogen_turbine : 65
+    hydrogen_energy : 110000
+
+# in GW or GWh
+historical_capacities:
+  DE:
+    2023-12-30:
+      onshore : 60.7
+      pv : 80.7
+      offshore : 8.4
+
+
+battery_power_efficiency_charging: 0.97
+battery_power_efficiency_discharging: 0.97
+hydrogen_electrolyser_efficiency: 0.68
+hydrogen_turbine_efficiency: 0.58
+mc-offshore: 0.3
+mc-onshore: 0.2
+mc-pv: 0.1
+solver_logfile: myopic.log
+solver_name: gurobi
+solver_options:
+  BarConvTol: 1.0e-08
+  crossover: 0
+  method: 2
+  threads: 4
+
+color:
+  battery_charger: '#999999'
+  battery_discharger: '#999999'
+  hydrogen_electrolyser: cyan
+  hydrogen_turbine: red
+  load: k
+  load-shedding: k
+  offshore: '#5D83A4'
+  onshore: '#3B6182'
+  pv: '#FFFF00'
+
+data:
+  folder: weather
+  DE:
+    start_date: 2015-01-01
+    end_date: 2023-12-31
