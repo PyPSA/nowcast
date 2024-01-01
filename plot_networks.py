@@ -120,6 +120,7 @@ def plot_supplydemand(n, fn):
     fig.savefig(f"{graphic_fn}.png",
                 transparent=True)
 
+    plt.close(fig)
 
 def plot_state_of_charge(n, fn):
 
@@ -153,6 +154,8 @@ def plot_state_of_charge(n, fn):
     fig.savefig(f"{graphic_fn}.png",
                 transparent=True)
 
+    plt.close(fig)
+
 def plot_price(n, fn):
 
     truncate = test_truncate(fn)
@@ -185,6 +188,8 @@ def plot_price(n, fn):
                 transparent=True)
     fig.savefig(f"{graphic_fn}.png",
                 transparent=True)
+
+    plt.close(fig)
 
 def plot_network(n, fn):
 

@@ -1,6 +1,6 @@
 
 
-scenario: 240101-offvoll1000
+scenario: 240101-2a-tighter
 
 results_dir: myopic
 
@@ -8,7 +8,7 @@ weather_dir: weather
 
 html_dir: html
 
-start_date: 2023-01-01
+start_date: 2022-01-01
 end_date: yesterday
 
 countries: [DE]
@@ -37,8 +37,8 @@ soc_start:
 # in GW or GWh
 future_capacities:
   DE:
-    onshore : 180
-    pv : 350
+    onshore : 160
+    pv : 300
     offshore : 40
     battery : 250
     battery_energy : 500

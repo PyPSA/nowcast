@@ -56,14 +56,24 @@ settings in the `config.yaml`).
 
 All parameters are controlled from the `config.yaml` file.
 
-First download the wind, solar and load data from the
-[SMARD](https://www.smard.de/) platform by running
+Running
 
-	python download_data_smard.py
+	python execute_all.py
 
-Then run
+will run all scripts in the necessary sequence.
 
-	python solve_myopic.py
+`download_data_smard.py` downloads the wind, solar and load data from the
+[SMARD](https://www.smard.de/) platform.
+
+`solve_myopic.py` optimises each day myopically in sequence, passing
+on the state of charge of all storage units.
+
+`concatenate_networks.py` builds a single PyPSA network out of all day
+networks (for plotting later).
+
+`plot_networks.py` generates the graphics.
+
+`generate_html.py` makes a webpage for each scenario.
 
 
 ## Other websites that served as an inspiration
