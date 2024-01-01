@@ -68,7 +68,7 @@ def concatenate_all(config):
             print(f"{date_string} already in full network, skipping")
             continue
 
-        fn = f"{results_dir}/DE-day-{date_string}.nc"
+        fn = f"{results_dir}/{ct}-day-{date_string}.nc"
 
         ni = pypsa.Network(fn)
 
@@ -91,7 +91,9 @@ if __name__ == "__main__":
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
-    full_fn = f"{results_dir}/DE-full.nc"
+    ct = "DE"
+
+    full_fn = f"{results_dir}/{ct}-full.nc"
 
     n = concatenate_all(config)
 

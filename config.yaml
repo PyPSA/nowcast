@@ -73,6 +73,8 @@ solver_options:
 
 numerical_threshold: 1.e-2
 
+weeks_to_plot: 10
+
 color:
   battery_charger: '#999999'
   battery_discharger: '#999999'

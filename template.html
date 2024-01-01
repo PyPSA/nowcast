@@ -17,8 +17,8 @@
 	  <ul>
 	    <li><a href="#future_capacities">Future capacities</a></li>
 	    <li><a href="#full_simulation">Full simulation</a></li>
-	    <li><a href="#days">Past {{n_days}} days</a></li>
-	    <li><a href="../{{results_dir}}/">Folder of outputs</a></li>
+	    <li><a href="#weeks">Past {{n_weeks}} weeks</a></li>
+	    <li><a href="../{{results_dir}}/">Folder of all outputs</a></li>
 	  </ul>
 	</div>
       </div>
@@ -42,25 +42,19 @@
       <div class="row">
 	<div class="col text-center">
 	  <h2 id="full_simulation">Full simulation</h2>
-	  <p>Dispatch:</p>
 	  <img src="../{{results_dir}}/{{ct}}-full-supplydemand.png" />
-	  <p>State of charge of storage:</p>
 	  <img src="../{{results_dir}}/{{ct}}-full-state_of_charge.png" />
-	  <p>Price:</p>
 	  <img src="../{{results_dir}}/{{ct}}-full-price.png" />
 	</div>
       </div>
       <div class="row">
 	<div class="col text-center">
-	  <h2 id="days">Past {{n_days}} days</h2>
-	  {% for day in days %}
-	  <h3>{{day}}</h3>
-	  <p>Dispatch:</p>
-	  <img src="../{{results_dir}}/{{ct}}-day-{{day}}-supplydemand.png" />
-	  <p>State of charge of storage:</p>
-	  <img src="../{{results_dir}}/{{ct}}-day-{{day}}-state_of_charge.png" />
-	  <p>Price:</p>
-	  <img src="../{{results_dir}}/{{ct}}-day-{{day}}-price.png" />
+	  <h2 id="weeks">Past {{n_weeks}} weeks</h2>
+	  {% for week in weeks %}
+	  <h3>{{week}}</h3>
+	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-supplydemand.png" />
+	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-state_of_charge.png" />
+	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-price.png" />
  	  {% endfor %}
 	</div>
       </div>

@@ -34,9 +34,12 @@ def generate_html(config):
     date_index = pd.date_range(start=config["start_date"],
                                end=end_date)
 
-    days = [str(date.date()) for date in date_index[:-11:-1]]
-    print(days)
+    isocalendar = date_index.isocalendar()
 
+    isocalendar["week_string"] = isocalendar.year.astype(str) + "-" + isocalendar.week.astype(str)
+    weeks = isocalendar["week_string"].unique()[:-config["weeks_to_plot"]-1:-1]
+
+    print(weeks)
 
     ct = "DE"
 
@@ -45,8 +48,8 @@ def generate_html(config):
     output_from_parsed_template = index_template.render(name=config["scenario"],
                                                         future_capacities=config["future_capacities"][ct],
                                                         results_dir=f"{config['results_dir']}/{config['scenario']}",
-                                                        days=days,
-                                                        n_days = len(days),
+                                                        weeks=weeks,
+                                                        n_weeks=len(weeks),
                                                         ct=ct)
 
     # write the parsed template

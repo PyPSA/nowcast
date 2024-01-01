@@ -102,24 +102,24 @@ def plot_supplydemand(n, fn):
     negative = -supply[negative_columns]
     negative = negative.where(negative >= 0, 0)
 
+
+    to_plot = [negative,positive]
+    title = ["demand","supply"]
     for i,ax in enumerate(axes):
-        if i == 0:
-            positive.plot.area(stacked=True,linewidth=0,color=color,ax=axes[i])
-        else:
-            negative.plot.area(stacked=True,linewidth=0,color=color,ax=axes[i])
+        to_plot[i].plot.area(stacked=True,linewidth=0,color=color,ax=axes[i])
         ax.set_ylabel("power [GW]")
         ax.set_xlabel("")
-
-    fig.tight_layout()
+        ax.set_title(title[i])
 
     graphic_fn = f"{results_dir}/{fn[:-3]}-supplydemand"
 
     supply.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True)
+                transparent=True,
+                bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
-                transparent=True)
-
+                transparent=True,
+                bbox_inches='tight')
     plt.close(fig)
 
 def plot_state_of_charge(n, fn):
@@ -127,7 +127,7 @@ def plot_state_of_charge(n, fn):
     truncate = test_truncate(fn)
 
     fig, ax = plt.subplots()
-    fig.set_size_inches((6, 4))
+    fig.set_size_inches((10,4))
 
     tz = config["time_zone"][ct]
 
@@ -142,7 +142,7 @@ def plot_state_of_charge(n, fn):
 
     to_plot.plot(ax=ax)
 
-    ax.set_ylabel("energy [TWh]")
+    ax.set_ylabel("storage state of charge [TWh]")
     ax.set_xlabel("")
     ax.set_ylim([-0.5,1.05*to_plot.max().max()])
 
@@ -150,10 +150,11 @@ def plot_state_of_charge(n, fn):
 
     to_plot.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True)
+                transparent=True,
+                bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
-                transparent=True)
-
+                transparent=True,
+                bbox_inches='tight')
     plt.close(fig)
 
 def plot_price(n, fn):
@@ -162,7 +163,7 @@ def plot_price(n, fn):
 
     fig, ax = plt.subplots()
 
-    fig.set_size_inches((6, 4))
+    fig.set_size_inches((10,4))
 
     tz = config["time_zone"][ct]
 
@@ -177,7 +178,7 @@ def plot_price(n, fn):
 
     to_plot.plot(ax=ax)
 
-    ax.set_ylabel("price [€/MWh]")
+    ax.set_ylabel("electricity price [€/MWh]")
     ax.set_xlabel("")
     ax.set_ylim([-0.5,1.05*to_plot.max()])
 
@@ -185,9 +186,11 @@ def plot_price(n, fn):
 
     to_plot.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True)
+                transparent=True,
+                bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
-                transparent=True)
+                transparent=True,
+                bbox_inches='tight')
 
     plt.close(fig)
 
@@ -201,6 +204,9 @@ def plot_all_networks(results_dir):
 
     for fn in os.listdir(results_dir):
         if fn[-3:] == ".nc":
+
+            if "-day-" in fn:
+                continue
             print(fn)
 
             pdf_fn = f"{results_dir}/{fn[:-3]}-supplydemand.pdf"
