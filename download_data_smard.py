@@ -87,12 +87,25 @@ def get_all_data():
 
         week_fn = f"{dir_name}/DE-week-{monday.date()}.csv"
 
+        download = False
+
         if os.path.isfile(week_fn):
             print(f"week file {week_fn} already exists")
+            df = pd.read_csv(week_fn,index_col=0,parse_dates=True)
+            if df.loc[date_string].isna().any().any():
+                print(f"...but data is missing for {date_string}, so re-downloading data")
+                download = True
         else:
             print(f"week file {week_fn} doesn't exist, downloading data")
+            download = True
+
+        if download:
             df = get_week_data(data_to_retrieve, date_string)
             df.to_csv(week_fn)
+
+        if df.loc[date_string].isna().any().any():
+            print(f"data is missing for {date_string}, skipping")
+            continue
 
         day_fn = f"{dir_name}/DE-day-{date_string}.csv"
 
@@ -100,7 +113,6 @@ def get_all_data():
             print(f"file {day_fn} already exists")
         else:
             print(f"file {day_fn} doesn't exist, creating from week file")
-            df = pd.read_csv(week_fn,index_col=0,parse_dates=True)
             df.index = df.index.tz_convert('Europe/Berlin')
             df_day = df.loc[date_string]
             df_day.index = df_day.index.tz_convert('UTC')
