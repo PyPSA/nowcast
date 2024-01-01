@@ -68,6 +68,9 @@ solver_options:
   method: 2
   threads: 4
 
+
+numerical_threshold: 1.e-2
+
 color:
   battery_charger: '#999999'
   battery_discharger: '#999999'

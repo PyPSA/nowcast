@@ -66,15 +66,19 @@ def get_supply(n, buses):
     return supply
 
 
+def test_truncate(fn):
+    if fn == "full.nc":
+        return False
+    else:
+        return True
+
+
 def plot_supplydemand(n, fn):
 
     fig, axes = plt.subplots(2)
     fig.set_size_inches((10, 8))
 
-    if fn == "full.nc":
-        truncate=False
-    else:
-        truncate=True
+    truncate = test_truncate(fn)
 
     tz = config["time_zone"][ct]
 
@@ -87,28 +91,106 @@ def plot_supplydemand(n, fn):
     if truncate:
         supply = supply.iloc[:-config["extended_hours"]]
 
-    threshold = 1e-2
+    threshold = config["numerical_threshold"]/1e3
 
-    positive_columns = supply.columns[(supply.min() >= 0) & (supply > threshold).any()]
-    negative_columns = supply.columns[(supply.max() <= 0)  & (supply < -threshold).any()]
+    positive_columns = supply.columns[(supply.min() >= -threshold) & (supply > threshold).any()]
+    negative_columns = supply.columns[(supply.max() <= threshold)  & (supply < -threshold).any()]
+
+    positive = supply[positive_columns]
+    positive = positive.where(positive >= 0, 0)
+
+    negative = -supply[negative_columns]
+    negative = negative.where(negative >= 0, 0)
 
     for i,ax in enumerate(axes):
         if i == 0:
-            supply[positive_columns].plot.area(stacked=True,linewidth=0,color=color,ax=axes[i])
+            positive.plot.area(stacked=True,linewidth=0,color=color,ax=axes[i])
         else:
-            (-supply[negative_columns]).plot.area(stacked=True,linewidth=0,color=color,ax=axes[i])
+            negative.plot.area(stacked=True,linewidth=0,color=color,ax=axes[i])
         ax.set_ylabel("power [GW]")
         ax.set_xlabel("")
 
     fig.tight_layout()
 
-    pdf_fn = f"{results_dir}/{fn[:-3]}-supplydemand.pdf"
-    fig.savefig(pdf_fn,
+    graphic_fn = f"{results_dir}/{fn[:-3]}-supplydemand"
+
+    supply.to_csv(f"{graphic_fn}.csv")
+    fig.savefig(f"{graphic_fn}.pdf",
+                transparent=True)
+    fig.savefig(f"{graphic_fn}.png",
+                transparent=True)
+
+
+def plot_state_of_charge(n, fn):
+
+    truncate = test_truncate(fn)
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches((6, 4))
+
+    tz = config["time_zone"][ct]
+
+    color = config["color"]
+
+    to_plot = n.stores_t.e/1e6
+
+    if truncate:
+        to_plot = to_plot.iloc[:-config["extended_hours"]]
+
+    to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
+
+    to_plot.plot(ax=ax)
+
+    ax.set_ylabel("energy [TWh]")
+    ax.set_xlabel("")
+    ax.set_ylim([-0.5,1.05*to_plot.max().max()])
+
+    graphic_fn = f"{results_dir}/{fn[:-3]}-state_of_charge"
+
+    to_plot.to_csv(f"{graphic_fn}.csv")
+    fig.savefig(f"{graphic_fn}.pdf",
+                transparent=True)
+    fig.savefig(f"{graphic_fn}.png",
+                transparent=True)
+
+def plot_price(n, fn):
+
+    truncate = test_truncate(fn)
+
+    fig, ax = plt.subplots()
+
+    fig.set_size_inches((6, 4))
+
+    tz = config["time_zone"][ct]
+
+    color = config["color"]
+
+    to_plot = n.buses_t.marginal_price["DE-electricity"].copy()
+
+    if truncate:
+        to_plot = to_plot.iloc[:-config["extended_hours"]]
+
+    to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
+
+    to_plot.plot(ax=ax)
+
+    ax.set_ylabel("price [€/MWh]")
+    ax.set_xlabel("")
+    ax.set_ylim([-0.5,1.05*to_plot.max()])
+
+    graphic_fn = f"{results_dir}/{fn[:-3]}-price"
+
+    to_plot.to_csv(f"{graphic_fn}.csv")
+    fig.savefig(f"{graphic_fn}.pdf",
+                transparent=True)
+    fig.savefig(f"{graphic_fn}.png",
                 transparent=True)
 
 def plot_network(n, fn):
 
     plot_supplydemand(n, fn)
+    plot_state_of_charge(n, fn)
+    plot_price(n, fn)
 
 def plot_all_networks(results_dir):
 
