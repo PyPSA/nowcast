@@ -6,6 +6,8 @@ results_dir: myopic
 
 weather_dir: weather
 
+html_dir: html
+
 start_date: 2023-01-01
 end_date: yesterday
 

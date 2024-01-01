@@ -1,7 +1,7 @@
 
-# Nowcast: Tomorrow's energy system with today's weather
+# Nowcast: Tomorrow's power system with today's weather
 
-Uses today's weather to show how the dispatch of tomorrow's energy
+Uses today's weather to show how the dispatch of tomorrow's power
 system works.
 
 At the moment only works for Germany.
