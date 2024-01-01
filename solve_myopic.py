@@ -16,6 +16,8 @@
 
 import pypsa, yaml, pandas as pd, os, pytz, datetime
 
+from shutil import copy
+
 
 def extend_df(df,hours):
     """extend an hourly df by hours, filling forward"""
@@ -194,6 +196,15 @@ def solve_all(config):
                            float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
 
 
+def copy_config(results_dir):
+
+    files = [
+        "config.yaml",
+        "solve_myopic.py",
+    ]
+    for f in files:
+        copy(f, results_dir)
+
 if __name__ == "__main__":
 
     with open('config.yaml', 'r') as file:
@@ -204,5 +215,7 @@ if __name__ == "__main__":
     results_dir = f"{config['results_dir']}/{config['scenario']}"
     if not os.path.isdir(results_dir):
         os.mkdir(results_dir)
+
+    copy_config(results_dir)
 
     solve_all(config)

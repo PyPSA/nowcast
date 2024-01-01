@@ -1,11 +1,11 @@
 
 
-scenario: voll1000
+scenario: 240101-offvoll1000
 
 results_dir: myopic
 
 start_date: 2023-01-01
-end_date: 2023-12-30
+end_date: 2023-12-31
 
 countries: [DE]
 
@@ -33,14 +33,14 @@ soc_start:
 # in GW or GWh
 future_capacities:
   DE:
-    onshore : 220
-    pv : 400
-    offshore : 0
-    battery : 300
+    onshore : 180
+    pv : 350
+    offshore : 40
+    battery : 250
     battery_energy : 500
     hydrogen_electrolyser : 65
     hydrogen_turbine : 65
-    hydrogen_energy : 110000
+    hydrogen_energy : 100000
 
 # in GW or GWh
 historical_capacities:
