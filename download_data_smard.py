@@ -90,6 +90,15 @@ def get_all_data():
     for date in date_index:
         date_string = str(date.date())
         print(date_string)
+
+        day_fn = f"{dir_name}/DE-day-{date_string}.csv"
+
+        if os.path.isfile(day_fn):
+            print(f"file {day_fn} already exists, skipping")
+            continue
+
+        print(f"file {day_fn} doesn't exist, creating from week file")
+
         monday = get_previous_monday(date_string)
 
         week_fn = f"{dir_name}/DE-week-{monday.date()}.csv"
@@ -111,19 +120,13 @@ def get_all_data():
             df.to_csv(week_fn)
 
         if df.loc[date_string].isna().any().any():
-            print(f"data is missing for {date_string}, skipping")
-            continue
+            print(f"warning, data is missing for {date_string}:")
+            print(df.loc[date_string].where(df.loc[date_string].isna()))
 
-        day_fn = f"{dir_name}/DE-day-{date_string}.csv"
-
-        if os.path.isfile(day_fn):
-            print(f"file {day_fn} already exists")
-        else:
-            print(f"file {day_fn} doesn't exist, creating from week file")
-            df.index = df.index.tz_convert('Europe/Berlin')
-            df_day = df.loc[date_string]
-            df_day.index = df_day.index.tz_convert('UTC')
-            df_day.to_csv(day_fn)
+        df.index = df.index.tz_convert('Europe/Berlin')
+        df_day = df.loc[date_string]
+        df_day.index = df_day.index.tz_convert('UTC')
+        df_day.to_csv(day_fn)
 
 
 

@@ -53,12 +53,20 @@ def concatenate_all(config):
 
     print(date_index)
 
+    if os.path.isfile(full_fn):
+        print("full file already exists")
+        n = pypsa.Network(full_fn)
+
     for i,date in enumerate(date_index):
 
         print(i)
 
         date_string = str(date.date())
         print(date_string)
+
+        if "n" in locals() and date_string in n.snapshots:
+            print(f"{date_string} already in full network, skipping")
+            continue
 
         fn = f"{results_dir}/DE-day-{date_string}.nc"
 
@@ -81,11 +89,11 @@ if __name__ == "__main__":
 
     print(config)
 
-    n = concatenate_all(config)
-
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
-    fn = f"{results_dir}/DE-full.nc"
+    full_fn = f"{results_dir}/DE-full.nc"
 
-    n.export_to_netcdf(fn,
+    n = concatenate_all(config)
+
+    n.export_to_netcdf(full_fn,
                        float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
