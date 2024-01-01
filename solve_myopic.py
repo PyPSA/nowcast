@@ -146,7 +146,16 @@ def solve_all(config):
 
     extended_hours = config["extended_hours"]
 
-    date_index = pd.date_range(start=config["start_date"], end=config["end_date"],tz=pytz.timezone(config["time_zone"][ct]))
+    end_date = config["end_date"]
+
+    if end_date == "today":
+        end_date = datetime.date.today()
+    elif end_date == "yesterday":
+        end_date = datetime.date.today() - datetime.timedelta(days=1)
+
+    date_index = pd.date_range(start=config["start_date"],
+                               end=end_date,
+                               tz=pytz.timezone(config["time_zone"][ct]))
 
     print(date_index)
 

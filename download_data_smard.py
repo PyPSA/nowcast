@@ -76,8 +76,15 @@ def get_week_data(data_to_retrieve, date_string):
 
 def get_all_data():
 
-    date_index = pd.date_range(start=config["data"][ct]["start_date"],
-                               end=config["data"][ct]["end_date"],
+    end_date = config["end_date"]
+
+    if end_date == "today":
+        end_date = datetime.date.today()
+    elif end_date == "yesterday":
+        end_date = datetime.date.today() - datetime.timedelta(days=1)
+
+    date_index = pd.date_range(start=config["start_date"],
+                               end=end_date,
                                tz=pytz.timezone(config["time_zone"][ct]))
 
     for date in date_index:
@@ -129,7 +136,7 @@ if __name__ == "__main__":
 
     ct = "DE"
 
-    dir_name = config["data"]["folder"]
+    dir_name = config["weather_dir"]
 
     if not os.path.isdir(dir_name):
         os.mkdir(dir_name)

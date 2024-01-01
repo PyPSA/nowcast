@@ -4,8 +4,10 @@ scenario: 240101-offvoll1000
 
 results_dir: myopic
 
+weather_dir: weather
+
 start_date: 2023-01-01
-end_date: 2023-12-31
+end_date: yesterday
 
 countries: [DE]
 
@@ -76,9 +78,3 @@ color:
   offshore: '#5D83A4'
   onshore: '#3B6182'
   pv: '#FFFF00'
-
-data:
-  folder: weather
-  DE:
-    start_date: 2023-01-01
-    end_date: 2023-12-31
