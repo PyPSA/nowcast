@@ -4,6 +4,8 @@
 Uses today's weather to show how the dispatch of tomorrow's power
 system works.
 
+<https://model.energy/nowcast/>
+
 At the moment only works for Germany.
 
 Takes day-ahead forecasts for wind, solar and load.
@@ -38,6 +40,10 @@ Future plans:
 - Include demand-side management
 - Include existing hydroelectricity
 - Include other storage technologies (iron-air batteries, methanol, ammonia, etc.)
+
+## Live website
+
+<https://model.energy/nowcast/>
 
 ## Installation
 
