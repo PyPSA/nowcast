@@ -166,25 +166,42 @@ def solve_all(config):
         date_string = str(date.date())
         print(date_string)
 
+        fn = f"{results_dir}/DE-day-{date_string}.nc"
+        if os.path.isfile(fn):
+            print(f"{fn} already exists, skipping")
+            continue
+
         if i == 0:
             soc = { f"{ct}-{key}" : value for key,value in config["soc_start"][ct].items() }
         else:
+            day_before = date - datetime.timedelta(days=1)
+            if "n" in locals() and day_before in n.snapshots:
+                print(f"using network in scope for {day_before.date()} SOC")
+            else:
+                day_before_fn = f"{results_dir}/DE-day-{str(day_before.date())}.nc"
+                print(f"reading in SOC from {day_before_fn}")
+                n = pypsa.Network(day_before_fn)
+
             soc = n.stores_t.e[-extended_hours-1:-extended_hours].squeeze().to_dict()
 
         print("soc:")
         print(soc)
 
-        df = pd.read_csv(f"{config['data']['folder']}/{ct}-day-{date_string}.csv",
+        weather_fn = f"{config['weather_dir']}/{ct}-day-{date_string}.csv"
+        if not os.path.isfile(weather_fn):
+            print(f"{weather_fn} is missing, skipping {date_string}")
+            continue
+
+        df = pd.read_csv(weather_fn,
                          parse_dates=True,
                          index_col=0)
 
         extended_df = extend_df(df,
                                 extended_hours)
 
-        print(extended_df)
-
         current_capacities = { f"{ct}-{key}" : value for key,value in config["historical_capacities"][ct][datetime.datetime.strptime("2023-12-30", '%Y-%m-%d').date()].items() }
 
+        print("current capacities:")
         print(current_capacities)
 
         per_unit = derive_pu_availability(extended_df,
@@ -201,7 +218,7 @@ def solve_all(config):
 
         solve_network(n)
 
-        n.export_to_netcdf(f"{results_dir}/DE-day-{date_string}.nc",
+        n.export_to_netcdf(fn,
                            float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
 
 
