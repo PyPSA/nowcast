@@ -25,6 +25,10 @@ def extend_df(df,hours):
     extended_df = df.reindex(extended_index, method='ffill')
     return extended_df
 
+def interpolate_historical_capacities(config, ct, date_index):
+    df = pd.DataFrame(config["historical_capacities"][ct]).T
+    df.index = pd.to_datetime(df.index).tz_localize(pytz.timezone(config["time_zone"][ct]))
+    return df.reindex(date_index).interpolate(limit_direction="both")
 
 def derive_pu_availability(current_series, current_capacities):
 
@@ -159,6 +163,8 @@ def solve_all(config):
 
     print(date_index)
 
+    historical_capacities = interpolate_historical_capacities(config, ct, date_index)
+
     for i,date in enumerate(date_index):
 
         print(i)
@@ -199,8 +205,7 @@ def solve_all(config):
         extended_df = extend_df(df,
                                 extended_hours)
 
-        current_capacities = { f"{ct}-{key}" : value for key,value in config["historical_capacities"][ct][datetime.datetime.strptime("2023-12-30", '%Y-%m-%d').date()].items() }
-
+        current_capacities = {f"{ct}-{key}" : value for key, value in historical_capacities.loc[date].items()}
         print("current capacities:")
         print(current_capacities)
 

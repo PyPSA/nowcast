@@ -21,6 +21,7 @@ scripts = [
     "download_data_smard.py",
     "solve_myopic.py",
     "concatenate_networks.py",
+    "concatenate_weeks.py",
     "plot_networks.py",
     "generate_html.py",
     ]

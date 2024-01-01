@@ -1,6 +1,6 @@
 
 
-scenario: 240101-2a-tighter
+scenario: 240101-2a-fixcaps
 
 results_dir: myopic
 
@@ -37,8 +37,8 @@ soc_start:
 # in GW or GWh
 future_capacities:
   DE:
-    onshore : 160
-    pv : 300
+    onshore : 140
+    pv : 280
     offshore : 40
     battery : 250
     battery_energy : 500
@@ -47,8 +47,17 @@ future_capacities:
     hydrogen_energy : 100000
 
 # in GW or GWh
+# from https://www.energy-charts.info/charts/installed_power/chart.htm
 historical_capacities:
   DE:
+    2022-01-01:
+      onshore : 55.9
+      pv : 60.1
+      offshore : 7.8
+    2022-12-31:
+      onshore : 58.0
+      pv : 67.6
+      offshore : 8.2
     2023-12-30:
       onshore : 60.7
       pv : 80.7
