@@ -62,14 +62,14 @@ Then run
 
 ## Other websites that served as an inspiration
 
-- [energy-charts REMod scenarios](https://www.energy-charts.info/charts/remod_installed_power/chart.htm?l=en&c=DE) (not live)
 - [David Osmond simulations for Australia](https://reneweconomy.com.au/a-near-100-per-cent-renewables-grid-is-well-within-reach-and-with-little-storage/)
-- [Agora future-o-meter for Germany](https://www.agora-energiewende.de/service/agorameter/chart/future_compare/07.07.2023/07.08.2023/future/2040/)
+- [Agora future-o-meter for Germany](https://www.agora-energiewende.de/service/agorameter)
+- [energy-charts REMod scenarios](https://www.energy-charts.info/charts/remod_installed_power/chart.htm?l=en&c=DE) (not live)
 
 
 ## License
 
-Copyright 2023 Tom Brown <https://nworbmot.org/>
+Copyright 2023-4 Tom Brown <https://nworbmot.org/>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
