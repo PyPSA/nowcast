@@ -15,7 +15,7 @@
 
 
 
-import os
+import os, sys
 
 scripts = [
     "download_data_smard.py",
@@ -26,4 +26,6 @@ scripts = [
     ]
 
 for script in scripts:
-    os.system(f"python {script}")
+    command = f"{sys.executable} {script}"
+    print(f"executing {command}")
+    os.system(command)

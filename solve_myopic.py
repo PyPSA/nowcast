@@ -136,8 +136,8 @@ def prepare_network(per_unit, future_capacities, load, soc, hydrogen_value):
 def solve_network(n):
     n.optimize.create_model()
 
-    status, termination_condition = n.optimize.solve_model(solver_name=config["solver_name"],
-                                                           solver_options=config["solver_options"],
+    status, termination_condition = n.optimize.solve_model(solver_name=solver_name,
+                                                           solver_options=config["solver_options"][solver_name],
                                                            log_fn=config["solver_logfile"])
 
 def solve_all(config):
@@ -220,6 +220,24 @@ def solve_all(config):
 
         n.export_to_netcdf(fn,
                            float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
+def gurobi_present():
+
+    try:
+        import gurobipy
+        gurobipy.Model()
+    except:
+        return False
+    else:
+        return True
+
+
+def determine_solver_name(config):
+    for solver_name in config["solver_names"]:
+        if solver_name == "gurobi":
+            if gurobi_present():
+                return solver_name
+        else:
+            return solver_name
 
 
 def copy_config(results_dir):
@@ -237,6 +255,9 @@ if __name__ == "__main__":
         config = yaml.safe_load(file)
 
     print(config)
+
+    solver_name = determine_solver_name(config)
+    print(f"using solver {solver_name}")
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
     if not os.path.isdir(results_dir):

@@ -63,13 +63,18 @@ mc-offshore: 0.3
 mc-onshore: 0.2
 mc-pv: 0.1
 solver_logfile: myopic.log
-solver_name: gurobi
+#order of preference
+solver_names: [gurobi,cbc]
 solver_options:
-  BarConvTol: 1.0e-08
-  crossover: 0
-  method: 2
-  threads: 4
-
+  gurobi:
+    BarConvTol: 1.0e-08
+    crossover: 0
+    method: 2
+    threads: 4
+  highs:
+    threads: 4
+  cbc:
+    threads: 4
 
 numerical_threshold: 1.e-2
 

@@ -67,10 +67,10 @@ def get_supply(n, buses):
 
 
 def test_truncate(fn):
-    if fn == "full.nc":
-        return False
-    else:
+    if "-day-" in fn:
         return True
+    else:
+        return False
 
 
 def plot_supplydemand(n, fn):
