@@ -222,9 +222,7 @@ if __name__ == "__main__":
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
-    print(config)
-
-    ct = "DE"
+    ct = config["countries"][0]
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 

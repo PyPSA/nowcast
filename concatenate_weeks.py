@@ -14,13 +14,18 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pypsa, yaml, pandas as pd, os, pytz, datetime
-
+import pypsa, yaml, pandas as pd, os, datetime
 
 from concatenate_networks import concatenate
 
 
-def concatenate_week(date_strings,week_fn):
+def concatenate_week(date_strings, week_fn, config):
+
+    ct = config["countries"][0]
+
+    extended_hours = config["extended_hours"]
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     for i,date_string in enumerate(date_strings):
 
@@ -39,6 +44,10 @@ def concatenate_week(date_strings,week_fn):
 
 def concatenate_weeks(config):
 
+    ct = config["countries"][0]
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
+
     end_date = config["end_date"]
 
     if end_date == "today":
@@ -47,8 +56,7 @@ def concatenate_weeks(config):
         end_date = datetime.date.today() - datetime.timedelta(days=1)
 
     date_index = pd.date_range(start=config["start_date"],
-                               end=end_date,
-                               tz=pytz.timezone(config["time_zone"][ct]))
+                               end=end_date)
 
     isocalendar = date_index.isocalendar()
 
@@ -61,25 +69,18 @@ def concatenate_weeks(config):
             print(date_strings)
 
             week_fn = f"{results_dir}/{ct}-week-{year}-{week}.nc"
+            date_fns = [f"{results_dir}/{ct}-day-{ds}.nc" for ds in date_strings]
 
             if os.path.isfile(week_fn):
-                n = pypsa.Network(week_fn)
-                if pd.Index([date_string in n.snapshots for date_string in date_strings]).all():
-                    print("all dates are in existing file, skipping")
+                if pd.Index([os.path.getmtime(week_fn) > os.path.getmtime(date_fn) for date_fn in date_fns]).all():
+                    print("all day files are older than the week file, skipping")
                     continue
-            concatenate_week(date_strings,week_fn)
+            concatenate_week(date_strings,week_fn,config)
 
 
 if __name__ == "__main__":
 
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
-
-
-    ct = "DE"
-
-    extended_hours = config["extended_hours"]
-
-    results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     concatenate_weeks(config)

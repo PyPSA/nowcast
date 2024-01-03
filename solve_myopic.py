@@ -14,10 +14,11 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pypsa, yaml, pandas as pd, os, pytz, datetime
+import pypsa, yaml, pandas as pd, os, datetime
 
 from shutil import copy
 
+from download_data_smard import get_existing_dates
 
 def extend_df(df,hours):
     """extend an hourly df by hours, filling forward"""
@@ -27,7 +28,7 @@ def extend_df(df,hours):
 
 def interpolate_historical_capacities(config, ct, date_index):
     df = pd.DataFrame(config["historical_capacities"][ct]).T
-    df.index = pd.to_datetime(df.index).tz_localize(pytz.timezone(config["time_zone"][ct]))
+    df.index = pd.to_datetime(df.index)
     return df.reindex(date_index).interpolate(limit_direction="both")
 
 def derive_pu_availability(current_series, current_capacities):
@@ -39,7 +40,7 @@ def derive_pu_availability(current_series, current_capacities):
     return pu
 
 
-def prepare_network(per_unit, future_capacities, load, soc, hydrogen_value):
+def prepare_network(per_unit, future_capacities, load, soc, config):
     n = pypsa.Network()
     n.set_snapshots(per_unit.index)
 
@@ -110,7 +111,7 @@ def prepare_network(per_unit, future_capacities, load, soc, hydrogen_value):
                     bus=f"{ct}-hydrogen",
                     carrier="hydrogen_energy",
                     e_nom=future_capacities[name]*1e3,
-                    marginal_cost=hydrogen_value,
+                    marginal_cost=config["hydrogen_value"],
                     e_initial=soc[name])
 
         name=f"{ct}-hydrogen_turbine"
@@ -137,7 +138,7 @@ def prepare_network(per_unit, future_capacities, load, soc, hydrogen_value):
     n.consistency_check()
     return n
 
-def solve_network(n):
+def solve_network(n, config, solver_name):
     n.optimize.create_model()
 
     status, termination_condition = n.optimize.solve_model(solver_name=solver_name,
@@ -146,9 +147,17 @@ def solve_network(n):
 
 def solve_all(config):
 
-    ct = "DE"
+    solver_name = determine_solver_name(config)
+    print(f"using solver {solver_name}")
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
+
+    ct = config["countries"][0]
 
     extended_hours = config["extended_hours"]
+
+    already = get_existing_dates(results_dir,
+                                 ct + r"-day-(\d{4}-\d{2}-\d{2}).nc")
 
     end_date = config["end_date"]
 
@@ -158,24 +167,21 @@ def solve_all(config):
         end_date = datetime.date.today() - datetime.timedelta(days=1)
 
     date_index = pd.date_range(start=config["start_date"],
-                               end=end_date,
-                               tz=pytz.timezone(config["time_zone"][ct]))
+                               end=end_date)
 
-    print(date_index)
+    dates_to_process = date_index.difference(already)
+
+    print(f"dates_to_process: {dates_to_process}")
 
     historical_capacities = interpolate_historical_capacities(config, ct, date_index)
 
-    for i,date in enumerate(date_index):
-
-        print(i)
+    for i,date in enumerate(dates_to_process):
 
         date_string = str(date.date())
-        print(date_string)
+
+        print(f"Solving date {date_string}")
 
         fn = f"{results_dir}/DE-day-{date_string}.nc"
-        if os.path.isfile(fn):
-            print(f"{fn} already exists, skipping")
-            continue
 
         if i == 0:
             soc = { f"{ct}-{key}" : value for key,value in config["soc_start"][ct].items() }
@@ -218,13 +224,17 @@ def solve_all(config):
                             future_capacities,
                             extended_df[[f"{ct}-load"]],
                             soc,
-                            config["hydrogen_value"])
+                            config)
 
 
-        solve_network(n)
+        solve_network(n,
+                      config,
+                      solver_name)
 
         n.export_to_netcdf(fn,
                            float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
+
+
 def gurobi_present():
 
     try:
@@ -245,7 +255,12 @@ def determine_solver_name(config):
             return solver_name
 
 
-def copy_config(results_dir):
+def copy_config(config):
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
+
+    if not os.path.isdir(results_dir):
+        os.mkdir(results_dir)
 
     files = [
         "config.yaml",
@@ -259,15 +274,6 @@ if __name__ == "__main__":
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
-    print(config)
-
-    solver_name = determine_solver_name(config)
-    print(f"using solver {solver_name}")
-
-    results_dir = f"{config['results_dir']}/{config['scenario']}"
-    if not os.path.isdir(results_dir):
-        os.mkdir(results_dir)
-
-    copy_config(results_dir)
+    copy_config(config)
 
     solve_all(config)

@@ -41,7 +41,7 @@ def generate_html(config):
 
     print(weeks)
 
-    ct = "DE"
+    ct = config["countries"][0]
 
     # load the `index.jinja` template
     index_template = env.get_template('template.html')

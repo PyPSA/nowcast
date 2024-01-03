@@ -33,7 +33,7 @@ def concatenate(n,ni):
 
 def concatenate_all(config):
 
-    ct = "DE"
+    ct = config["countries"][0]
 
     extended_hours = config["extended_hours"]
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
-    ct = "DE"
+    ct = config["countries"][0]
 
     full_fn = f"{results_dir}/{ct}-full.nc"
 

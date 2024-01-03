@@ -14,7 +14,7 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pandas as pd, pytz, yaml, os, datetime, requests
+import pandas as pd, pytz, yaml, os, datetime, requests, re
 
 
 # DE-load seems to be actual load rather than forecast
@@ -74,7 +74,30 @@ def get_week_data(data_to_retrieve, date_string):
 
     return df
 
-def get_all_data():
+
+def get_existing_dates(dir_name, pattern):
+
+    date_strings = []
+
+    for filename in os.listdir(dir_name):
+        match = re.match(pattern, filename)
+        if match:
+            date_strings.append(match.group(1))
+
+    return pd.to_datetime(sorted(date_strings))
+
+
+def get_all_data(config):
+
+    ct = config["countries"][0]
+
+    dir_name = config["weather_dir"]
+
+    if not os.path.isdir(dir_name):
+        os.mkdir(dir_name)
+
+    already = get_existing_dates(dir_name,
+                                 r"DE-day-(\d{4}-\d{2}-\d{2}).csv")
 
     end_date = config["end_date"]
 
@@ -84,23 +107,19 @@ def get_all_data():
         end_date = datetime.date.today() - datetime.timedelta(days=1)
 
     date_index = pd.date_range(start=config["start_date"],
-                               end=end_date,
-                               tz=pytz.timezone(config["time_zone"][ct]))
+                               end=end_date)
 
-    for date in date_index:
+    dates_to_process = date_index.difference(already)
+
+    print(f"dates_to_process: {dates_to_process}")
+
+    for date in dates_to_process:
         date_string = str(date.date())
-        print(date_string)
-
-        day_fn = f"{dir_name}/DE-day-{date_string}.csv"
-
-        if os.path.isfile(day_fn):
-            print(f"file {day_fn} already exists, skipping")
-            continue
-
-        print(f"file {day_fn} doesn't exist, creating from week file")
+        print(f"Getting data for {date_string}")
 
         monday = get_previous_monday(date_string)
 
+        day_fn = f"{dir_name}/DE-day-{date_string}.csv"
         week_fn = f"{dir_name}/DE-week-{monday.date()}.csv"
 
         download = False
@@ -128,20 +147,9 @@ def get_all_data():
         df_day.index = df_day.index.tz_convert('UTC')
         df_day.to_csv(day_fn)
 
-
-
 if __name__ == "__main__":
 
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
-    print(config)
-
-    ct = "DE"
-
-    dir_name = config["weather_dir"]
-
-    if not os.path.isdir(dir_name):
-        os.mkdir(dir_name)
-
-    get_all_data()
+    get_all_data(config)
