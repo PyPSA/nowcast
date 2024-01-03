@@ -3,5 +3,6 @@
 !*.py
 !*.md
 !*.txt
-!*.yaml
+!config.yaml
+!scenario-default.yaml
 !*.html

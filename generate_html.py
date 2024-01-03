@@ -15,7 +15,7 @@
 
 from jinja2 import Template, Environment, FileSystemLoader
 
-import yaml, datetime, pandas as pd
+import yaml, datetime, pandas as pd, sys
 
 # load templates folder to environment (security measure)
 env = Environment(loader=FileSystemLoader('./'))
@@ -62,6 +62,11 @@ if __name__ == "__main__":
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
-    print(config)
+    scenario_fn = sys.argv[1]
+
+    with open(scenario_fn, 'r') as file:
+        config.update(yaml.safe_load(file))
+
+    config["scenario"] = scenario_fn[scenario_fn.find("-")+1:-5]
 
     generate_html(config)

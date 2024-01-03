@@ -14,7 +14,7 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pypsa, yaml, pandas as pd, os, pytz, datetime
+import pypsa, yaml, pandas as pd, os, pytz, datetime, sys
 
 import matplotlib.pyplot as plt
 
@@ -221,6 +221,13 @@ if __name__ == "__main__":
 
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
+
+    scenario_fn = sys.argv[1]
+
+    with open(scenario_fn, 'r') as file:
+        config.update(yaml.safe_load(file))
+
+    config["scenario"] = scenario_fn[scenario_fn.find("-")+1:-5]
 
     ct = config["countries"][0]
 

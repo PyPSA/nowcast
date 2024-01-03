@@ -17,8 +17,11 @@
 
 import os, sys
 
-scripts = [
+scripts_generic = [
     "download_data_smard.py",
+]
+
+scripts_scenario = [
     "solve_myopic.py",
     "concatenate_networks.py",
     "concatenate_weeks.py",
@@ -26,7 +29,22 @@ scripts = [
     "generate_html.py",
     ]
 
-for script in scripts:
+
+scenario_fns = []
+
+for fn in os.listdir("./"):
+    if fn[:9] == "scenario-" and fn[-5:] == ".yaml":
+        scenario_fns.append(fn)
+
+print(scenario_fns)
+
+for script in scripts_generic:
     command = f"{sys.executable} {script}"
     print(f"executing {command}")
     os.system(command)
+
+for scenario_fn in scenario_fns:
+    for script in scripts_scenario:
+        command = f"{sys.executable} {script} {scenario_fn}"
+        print(f"executing {command}")
+        os.system(command)

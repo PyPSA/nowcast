@@ -1,0 +1,30 @@
+
+
+# in GW or GWh
+future_capacities:
+  DE:
+    onshore : 140
+    pv : 280
+    offshore : 40
+    battery : 250
+    battery_energy : 500
+    hydrogen_electrolyser : 65
+    hydrogen_turbine : 65
+    hydrogen_energy : 100000
+
+battery_power_efficiency_charging: 0.97
+battery_power_efficiency_discharging: 0.97
+hydrogen_electrolyser_efficiency: 0.68
+hydrogen_turbine_efficiency: 0.58
+mc-offshore: 0.3
+mc-onshore: 0.2
+mc-pv: 0.1
+
+# load-shedding in EUR/MWh
+voll: 1000.
+
+# constant value of H2 in EUR/MWh
+hydrogen_value: 60.
+
+# extend last hour so no end-of-horizon effects
+extended_hours: 6

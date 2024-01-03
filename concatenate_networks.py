@@ -14,7 +14,7 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pypsa, yaml, pandas as pd, os, pytz, datetime
+import pypsa, yaml, pandas as pd, os, pytz, datetime, sys
 
 
 
@@ -87,7 +87,12 @@ if __name__ == "__main__":
     with open('config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
-    print(config)
+    scenario_fn = sys.argv[1]
+
+    with open(scenario_fn, 'r') as file:
+        config.update(yaml.safe_load(file))
+
+    config["scenario"] = scenario_fn[scenario_fn.find("-")+1:-5]
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
