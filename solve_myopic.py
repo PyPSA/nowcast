@@ -175,7 +175,7 @@ def solve_all(config):
 
     historical_capacities = interpolate_historical_capacities(config, ct, date_index)
 
-    for i,date in enumerate(dates_to_process):
+    for date in dates_to_process:
 
         date_string = str(date.date())
 
@@ -183,20 +183,22 @@ def solve_all(config):
 
         fn = f"{results_dir}/DE-day-{date_string}.nc"
 
-        if i == 0:
-            soc = { f"{ct}-{key}" : value for key,value in config["soc_start"][ct].items() }
-        else:
-            day_before = date - datetime.timedelta(days=1)
-            if "n" in locals() and day_before in n.snapshots:
-                print(f"using network in scope for {day_before.date()} SOC")
-            else:
-                day_before_fn = f"{results_dir}/DE-day-{str(day_before.date())}.nc"
-                print(f"reading in SOC from {day_before_fn}")
-                n = pypsa.Network(day_before_fn)
+        day_before = date - datetime.timedelta(days=1)
+        day_before_fn = f"{results_dir}/DE-day-{str(day_before.date())}.nc"
 
+        if "n" in locals() and day_before.tz_localize("UTC") in n.snapshots:
+            print(f"using network in scope for {day_before.date()} SOC")
+        elif os.path.isfile(day_before_fn):
+            print(f"reading in SOC from {day_before_fn}")
+            n = pypsa.Network(day_before_fn)
+        else:
+            print(f"no previously-calculated SOC, using soc_start")
+            soc = { f"{ct}-{key}" : value for key,value in config["soc_start"][ct].items() }
+
+        if "n" in locals():
             soc = n.stores_t.e[-extended_hours-1:-extended_hours].squeeze().to_dict()
 
-        print("soc:")
+        print("using previous soc:")
         print(soc)
 
         weather_fn = f"{config['weather_dir']}/{ct}-day-{date_string}.csv"
