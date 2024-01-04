@@ -20,12 +20,12 @@ import pypsa, yaml, pandas as pd, os, pytz, datetime, sys
 
 def concatenate(n,ni):
 
-    n.set_snapshots(n.snapshots.union(ni.snapshots))
-
     for c in n.iterate_components():
         for attr in c.pnl:
             if not c.pnl[attr].empty:
-                c.pnl[attr].loc[ni.snapshots] = getattr(ni,c.list_name + "_t")[attr]
+                c.pnl[attr] = pd.concat([c.pnl[attr],getattr(ni,c.list_name + "_t")[attr]])
+
+    n.set_snapshots(n.snapshots.union(ni.snapshots))
 
     return n
 
