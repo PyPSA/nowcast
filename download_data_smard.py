@@ -59,7 +59,7 @@ def get_previous_monday(date_string):
     return dt - datetime.timedelta(dt.weekday())
 
 
-def get_week_data(data_to_retrieve, date_string):
+def get_week_data(data_to_retrieve, date_string, ct):
     """date_string is e.g. '2023-01-25'"""
     print(f"you passed the date {date_string}")
     monday = get_previous_monday(date_string)
@@ -135,7 +135,7 @@ def get_all_data(config):
             download = True
 
         if download:
-            df = get_week_data(data_to_retrieve, date_string)
+            df = get_week_data(data_to_retrieve, date_string, ct)
             df.to_csv(week_fn)
 
         if df.loc[date_string].isna().any().any():
