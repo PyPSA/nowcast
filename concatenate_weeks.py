@@ -16,7 +16,7 @@
 
 import pypsa, yaml, pandas as pd, os, datetime, sys
 
-from concatenate_networks import concatenate
+from concatenate_networks import concatenate, safe_pypsa_import
 
 
 def concatenate_week(date_strings, week_fn, config):
@@ -33,7 +33,7 @@ def concatenate_week(date_strings, week_fn, config):
 
         fn = f"{results_dir}/{ct}-day-{date_string}.nc"
 
-        ni = pypsa.Network(fn)
+        ni = safe_pypsa_import(fn)
 
         #truncate overlap
         ni.set_snapshots(ni.snapshots[:-extended_hours])

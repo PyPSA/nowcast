@@ -17,6 +17,22 @@
 import pypsa, yaml, pandas as pd, os, pytz, datetime, sys
 
 
+def safe_pypsa_import(filename):
+    """If time series are all empty, fill with zeros."""
+
+    n = pypsa.Network(filename)
+
+
+    list_attrs = {"Link" : ["p0","p1"],
+                                "Store" : ["e","p"]}
+
+    for c in n.iterate_components(list_attrs.keys()):
+        for attr in list_attrs[c.name]:
+            if c.pnl[attr].empty:
+                print(f"Since {attr} is empty for {c.list_name}, filling with zeros")
+                c.pnl[attr] = c.pnl[attr].reindex(c.df.index, axis=1).fillna(0.)
+
+    return n
 
 def concatenate(n,ni):
 
@@ -66,7 +82,7 @@ def concatenate_all(config):
 
         fn = f"{results_dir}/{ct}-day-{date_string}.nc"
 
-        ni = pypsa.Network(fn)
+        ni = safe_pypsa_import(fn)
 
         #truncate overlap
         ni.set_snapshots(ni.snapshots[:-extended_hours])

@@ -16,6 +16,8 @@
 
 import pypsa, yaml, pandas as pd, os, pytz, datetime, sys
 
+from concatenate_networks import safe_pypsa_import
+
 import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')
@@ -85,6 +87,10 @@ def plot_supplydemand(n, fn):
     color = config["color"]
 
     supply = get_supply(n,[f"{ct}-electricity"])/1e3
+
+    if supply.sum(axis=1).abs().max() > 1e-3:
+        print("Demand-supply is violated!")
+        sys.exit()
 
     supply.index = supply.index.tz_localize("UTC").tz_convert(tz)
 
@@ -212,7 +218,7 @@ def plot_all_networks(results_dir):
                 continue
             else:
                 print(f"calculating new plots for {pdf_fn}")
-                n = pypsa.Network(f"{results_dir}/{fn}")
+                n = safe_pypsa_import(f"{results_dir}/{fn}")
                 plot_network(n, fn)
 
 if __name__ == "__main__":
