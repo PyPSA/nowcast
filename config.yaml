@@ -5,7 +5,7 @@ weather_dir: weather
 
 html_dir: html
 
-start_date: 2022-01-01
+start_date: 2015-01-01
 end_date: yesterday
 
 countries: [DE]
@@ -15,18 +15,40 @@ time_zone:
 
 vre_techs: [pv, onshore, offshore]
 
-# in MWh
-soc_start:
-  DE:
-    battery_energy: 5.0e3
-    hydrogen_energy: 5.0e7
-
 
 # in GW or GWh
 # from https://www.energy-charts.info/charts/installed_power/chart.htm
 historical_capacities:
   DE:
-    2022-01-01:
+    2014-12-31:
+      onshore : 37.6
+      pv : 37.9
+      offshore : 1.
+    2015-12-31:
+      onshore : 41.3
+      pv : 39.2
+      offshore : 3.3
+    2016-12-31:
+      onshore : 45.3
+      pv : 40.7
+      offshore : 4.2
+    2017-12-31:
+      onshore : 50.2
+      pv : 42.3
+      offshore : 5.4
+    2018-12-31:
+      onshore : 52.3
+      pv : 45.2
+      offshore : 6.4
+    2019-12-31:
+      onshore : 53.2
+      pv : 48.9
+      offshore : 7.6
+    2020-12-31:
+      onshore : 54.3
+      pv : 54.4
+      offshore : 7.8
+    2021-12-31:
       onshore : 55.9
       pv : 60.1
       offshore : 7.8
@@ -42,7 +64,7 @@ historical_capacities:
 
 solver_logfile: myopic.log
 #order of preference
-solver_names: [gurobi,cbc]
+solver_names: [cbc,gurobi]
 solver_options:
   gurobi:
     BarConvTol: 1.0e-08
@@ -64,7 +86,7 @@ color:
   hydrogen_electrolyser: cyan
   hydrogen_turbine: red
   load: k
-  load-shedding: k
+  load_shedding: k
   offshore: '#5D83A4'
   onshore: '#3B6182'
   pv: '#FFFF00'

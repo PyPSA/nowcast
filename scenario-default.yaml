@@ -1,4 +1,17 @@
 
+name: "Default (from 2022)"
+
+description: "More wind and solar"
+
+
+start_date: 2022-01-01
+end_date: yesterday
+
+# in MWh
+soc_start:
+  DE:
+    battery_energy: 5.0e3
+    hydrogen_energy: 5.0e7
 
 # in GW or GWh
 future_capacities:
