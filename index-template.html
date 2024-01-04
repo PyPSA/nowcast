@@ -19,10 +19,11 @@ hydrogen storage are optimised over 24 hours to meet demand. The long-term hydro
 storage is dispatched using a constant hydrogen value (e.g. 70 &euro;/MWh).</p>
 	  <p>Currently it only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
 	  <p>Open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a>. Data from <a href="https://www.smard.de/home">SMARD</a>.</p>
-	  <h2>Scenarios</h2>
+	  <h2>Explore scenarios</h2>
 	  <ul>
-            <li><a href="html/240101-2a-fixcaps.html">240101-2a-baseline</a></li>
-	    <li><a href="html/240101-2a-tighter.html">240101-2a-highercaps</a></li>
+	    {% for scenario in scenarios %}
+              <li><a href="html/{{scenario}}.html">{{ scenarios[scenario]["name"] }}</a> ({{ scenarios[scenario]["description"] }})</li>
+ 	    {% endfor %}
 	  </ul>
 	  <h2>Other websites that served as an inspiration</h2>
 
