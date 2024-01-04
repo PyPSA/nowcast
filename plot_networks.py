@@ -207,11 +207,9 @@ def plot_all_networks(results_dir):
 
             if "-day-" in fn:
                 continue
-            print(fn)
-
             pdf_fn = f"{results_dir}/{fn[:-3]}-supplydemand.pdf"
             if os.path.isfile(pdf_fn) and (os.path.getmtime(pdf_fn) > os.path.getmtime(os.path.join(results_dir,fn))):
-                print(f"fresh plots already exist for {pdf_fn}")
+                continue
             else:
                 print(f"calculating new plots for {pdf_fn}")
                 n = pypsa.Network(f"{results_dir}/{fn}")

@@ -25,13 +25,14 @@ def concatenate(n,ni):
     for c in n.iterate_components():
         for attr in c.pnl:
             if not c.pnl[attr].empty:
-                #print(c.name,attr)
                 c.pnl[attr].loc[ni.snapshots] = getattr(ni,c.list_name + "_t")[attr]
 
     return n
 
 
 def concatenate_all(config):
+
+    print("concatenating all day networks to a full network")
 
     ct = config["countries"][0]
 
@@ -50,23 +51,18 @@ def concatenate_all(config):
                                end=end_date,
                                tz=pytz.timezone(config["time_zone"][ct]))
 
-
-    print(date_index)
-
     if os.path.isfile(full_fn):
-        print("full file already exists")
+        print("full network already exists")
         n = pypsa.Network(full_fn)
 
     for i,date in enumerate(date_index):
 
-        print(i)
-
         date_string = str(date.date())
-        print(date_string)
 
         if "n" in locals() and date_string in n.snapshots:
-            print(f"{date_string} already in full network, skipping")
             continue
+
+        print(f"{date_string} not yet in full network, adding")
 
         fn = f"{results_dir}/{ct}-day-{date_string}.nc"
 

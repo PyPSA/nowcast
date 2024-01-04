@@ -21,6 +21,8 @@ from concatenate_networks import concatenate
 
 def concatenate_week(date_strings, week_fn, config):
 
+    print(f"concatenating {date_strings} to {week_fn}")
+
     ct = config["countries"][0]
 
     extended_hours = config["extended_hours"]
@@ -44,6 +46,8 @@ def concatenate_week(date_strings, week_fn, config):
 
 def concatenate_weeks(config):
 
+    print("concatenating all day networks to week networks")
+
     ct = config["countries"][0]
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
@@ -63,17 +67,14 @@ def concatenate_weeks(config):
     for year in isocalendar.year.unique():
 
         for week in isocalendar[isocalendar.year == year].week.unique():
-            print(year,week)
             dates = date_index[(isocalendar.week == week) & (isocalendar.year == year)]
             date_strings = [str(date.date()) for date in dates]
-            print(date_strings)
 
             week_fn = f"{results_dir}/{ct}-week-{year}-{week}.nc"
             date_fns = [f"{results_dir}/{ct}-day-{ds}.nc" for ds in date_strings]
 
             if os.path.isfile(week_fn):
                 if pd.Index([os.path.getmtime(week_fn) > os.path.getmtime(date_fn) for date_fn in date_fns]).all():
-                    print("all day files are older than the week file, skipping")
                     continue
             concatenate_week(date_strings,week_fn,config)
 
