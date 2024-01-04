@@ -108,6 +108,9 @@ def plot_supplydemand(n, fn):
     negative = -supply[negative_columns]
     negative = negative.where(negative >= 0, 0)
 
+    if "-full.nc" in fn:
+        positive = positive.resample("W").mean()
+        negative = negative.resample("W").mean()
 
     to_plot = [negative,positive]
     title = ["demand","supply"]
