@@ -1,17 +1,16 @@
 
-name: "Default (from 2022)"
+name: "Default scenario"
 
-description: "More wind and solar"
+description: "enough wind and solar to avoid load-shedding"
 
-
-start_date: 2022-01-01
+start_date: 2015-01-01
 end_date: yesterday
 
 # in MWh
 soc_start:
   DE:
     battery_energy: 5.0e3
-    hydrogen_energy: 5.0e7
+    hydrogen_energy: 7.0e7
 
 # in GW or GWh
 future_capacities:
@@ -19,8 +18,8 @@ future_capacities:
     onshore : 140
     pv : 280
     offshore : 40
-    battery : 250
-    battery_energy : 500
+    battery : 60
+    battery_energy : 300
     hydrogen_electrolyser : 65
     hydrogen_turbine : 65
     hydrogen_energy : 100000

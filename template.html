@@ -28,12 +28,14 @@
 	  <table id="results_table">
             <tr>
               <th>Technology</th>
-              <th>Capacity [GW or GWh]</th>
+              <th>Future Capacity [GW or GWh]</th>
+              <th>Current Capacity [GW or GWh]</th>
             </tr>
 	    {% for tech in future_capacities %}
             <tr>
               <td>{{tech}}</td>
               <td>{{future_capacities[tech]}}</td>
+              <td>{{current_capacities[tech]}}</td>
             </tr>
  	    {% endfor %}
          </table>

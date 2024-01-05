@@ -43,10 +43,19 @@ def generate_html(config):
 
     ct = config["countries"][0]
 
+    current_capacities = pd.DataFrame(config["historical_capacities"]["DE"]).T
+    current_capacities = current_capacities.iloc[-1].to_dict()
+    current_capacities.update({"battery" : "<1",
+                               "battery_energy" : "<10",
+                               "hydrogen_electrolyser" : "<1",
+                               "hydrogen_turbine" : 0,
+                               "hydrogen_energy" : "<1"})
+
     # load the `index.jinja` template
     index_template = env.get_template('template.html')
-    output_from_parsed_template = index_template.render(name=config["scenario"],
+    output_from_parsed_template = index_template.render(name=config["name"],
                                                         future_capacities=config["future_capacities"][ct],
+                                                        current_capacities=current_capacities,
                                                         results_dir=f"{config['results_dir']}/{config['scenario']}",
                                                         weeks=weeks,
                                                         n_weeks=len(weeks),
