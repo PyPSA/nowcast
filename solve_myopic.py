@@ -257,7 +257,7 @@ def determine_solver_name(config):
             return solver_name
 
 
-def copy_config(config):
+def copy_config(config,scenario_fn):
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
@@ -266,8 +266,10 @@ def copy_config(config):
 
     files = [
         "config.yaml",
+        scenario_fn,
         "solve_myopic.py",
     ]
+
     for f in files:
         copy(f, results_dir)
 
@@ -283,6 +285,6 @@ if __name__ == "__main__":
 
     config["scenario"] = scenario_fn[scenario_fn.find("-")+1:-5]
 
-    copy_config(config)
+    copy_config(config,scenario_fn)
 
     solve_all(config)
