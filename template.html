@@ -18,6 +18,7 @@
 	    <li><a href="#future_capacities">Future capacities in {{ct}}</a></li>
 	    <li><a href="#full_simulation">Full simulation</a></li>
 	    <li><a href="#weeks">Past {{n_weeks}} weeks</a></li>
+	    <li><a href="#statistics">Aggregated yearly statistics</a></li>
 	    <li><a href="../{{results_dir}}/">Folder of all outputs</a></li>
 	  </ul>
 	</div>
@@ -59,6 +60,23 @@
 	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-state_of_charge.png" />
 	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-price.png" />
  	  {% endfor %}
+	</div>
+      </div>
+      <div class="row">
+	<div class="col text-center">
+	  <h2 id="statistics">Aggregated yearly statistics</h2>
+	  <table id="statistics_table">
+            <tr>
+              <th>Statistic</th>
+              <th>value</th>
+            </tr>
+	    {% for statistic in statistics %}
+            <tr>
+              <td>{{statistic}}</td>
+              <td>{{ "%.2f"|format(statistics[statistic]) }}</td>
+            </tr>
+ 	    {% endfor %}
+         </table>
 	</div>
       </div>
     </div>

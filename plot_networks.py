@@ -253,6 +253,100 @@ def plot_price_duration(n, fn):
     plt.close(fig)
 
 
+def generate_statistics(n, fn, config):
+
+    nyears = n.snapshot_weightings["generators"].sum()/8766
+
+    ct = config["countries"][0]
+
+    s = pd.Series()
+
+    s["electricity mean price [€/MWh]"] = n.buses_t.marginal_price[f"{ct}-electricity"].mean()
+
+    costs = pd.read_csv("costs.csv",
+                        index_col=0)
+
+    caps = pd.Series(config["future_capacities"][ct])
+
+    component_costs = (caps*costs["fixed [€/MW/a]"]/1e3).rename(lambda n: n + " yearly costs [M€/a]")
+
+    caps.index = [i + " capacity [GWh]" if "energy" in i else i + " capacity [GW]" for i in caps.index]
+
+    s = pd.concat([s,caps,component_costs])
+
+    s["total yearly costs [M€/a]"] = component_costs.sum()
+
+
+    supply = get_supply(n,[f"{ct}-electricity"])
+
+    s = pd.concat([s,supply.sum().abs().rename(lambda n: n + " yearly dispatch [TWh/a]")/nyears/1e6])
+
+    vre_techs = config["vre_techs"]
+
+    available = n.generators_t.p_max_pu.multiply(n.snapshot_weightings["generators"],axis=0).multiply(n.generators.p_nom_opt,axis=1)
+    available = available.groupby(n.generators.carrier,axis=1).sum()[vre_techs]
+
+    s = pd.concat([s,available.sum().rename(lambda n: n + " yearly available [TWh/a]")/nyears/1e6])
+
+    cf_available = available.mean()/n.generators.p_nom_opt.groupby(n.generators.carrier).sum()[vre_techs]
+    s = pd.concat([s,cf_available.rename(lambda n: n + " capacity factor available [%]")*100])
+
+    used = n.generators_t.p.groupby(n.generators.carrier,axis=1).sum()[vre_techs]
+    s = pd.concat([s,used.sum().rename(lambda n: n + " yearly used [TWh/a]")/nyears/1e6])
+
+
+    curtailed = available-used
+    s = pd.concat([s,curtailed.sum().rename(lambda n: n + " yearly curtailed [TWh/a]")/nyears/1e6])
+
+    curtailment = curtailed.sum()/available.sum()
+    s = pd.concat([s,curtailment.rename(lambda n: n + " average curtailment [%]")*100])
+
+    cf = (n.generators_t.p.mean()/n.generators.p_nom_opt).groupby(n.generators.carrier).mean()
+    s = pd.concat([s,cf.rename(lambda n: n + " capacity factor [%]")*100])
+
+    cf = (n.links_t.p0.mean()/n.links.p_nom_opt).groupby(n.links.carrier).mean()
+    s = pd.concat([s,cf.rename(lambda n: n + " capacity factor [%]")*100])
+
+    p = n.generators_t.p.multiply(n.snapshot_weightings["generators"],axis=0).groupby(n.generators.carrier,axis=1).sum()
+    revenue = p.multiply(n.buses_t.marginal_price[f"{ct}-electricity"],axis=0)
+    mv = revenue.sum()/p.sum()
+
+    s = pd.concat([s,revenue.sum().rename(lambda n: n + " yearly revenue [M€/a]")/nyears/1e6])
+    s = pd.concat([s,mv.rename(lambda n: n + " average market value [€/MWh]")])
+
+
+    p0 = n.links_t.p0.multiply(n.snapshot_weightings["generators"],axis=0)
+    prices0 = n.buses_t.marginal_price[n.links.bus0]
+    prices0.columns = n.links.index
+    p1 = n.links_t.p1.multiply(n.snapshot_weightings["generators"],axis=0)
+    prices1 = n.buses_t.marginal_price[n.links.bus1]
+    prices1.columns = n.links.index
+    revenue = (-p1*prices1 -p0*prices0).sum().groupby(n.links.index).sum()
+    #mv = revenue.sum()/p.sum()
+    s = pd.concat([s,revenue.rename(lambda n: n + " yearly revenue [M€/a]")/nyears/1e6])
+
+    for port in ["0","1"]:
+        links = n.links.index[n.links[f"bus{port}"] == f"{ct}-electricity"]
+        p = n.links_t[f"p{port}"].multiply(n.snapshot_weightings["generators"],axis=0).groupby(n.links.carrier[links],axis=1).sum()
+        revenue = p.multiply(n.buses_t.marginal_price[f"{ct}-electricity"],axis=0)
+        mv = revenue.sum()/p.sum()
+        s = pd.concat([s,mv.rename(lambda n: n + " average market value [€/MWh]")])
+
+
+    s["total yearly revenue [M€/a]"] = s[s.index.str.contains(" yearly revenue")].sum()
+
+    s["System levelised cost [€/MWh]"] = s["total yearly costs [M€/a]"]/s["load yearly dispatch [TWh/a]"]
+
+    print("replacing following nans with zero")
+
+    print(s[s.isna()])
+
+    s[s.isna()] = 0.
+
+    print(s)
+
+    s.to_csv(f"{results_dir}/{fn[:-3]}-statistics.csv")
+
 def plot_network(n, fn):
 
     plot_supplydemand(n, fn)
@@ -261,6 +355,7 @@ def plot_network(n, fn):
 
     if "-full.nc" in fn:
         plot_price_duration(n, fn)
+        generate_statistics(n, fn, config)
 
 def plot_all_networks(results_dir):
 
