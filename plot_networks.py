@@ -135,25 +135,36 @@ def plot_state_of_charge(n, fn):
 
     truncate = test_truncate(fn)
 
-    fig, ax = plt.subplots()
-    fig.set_size_inches((10,4))
+    fig, axes = plt.subplots(2)
+    fig.set_size_inches((10,7))
 
     tz = config["time_zone"][ct]
 
     color = config["color"]
 
-    to_plot = n.stores_t.e/1e6
+    to_plot = n.stores_t.e.groupby(n.stores.carrier, axis=1).sum()
 
     if truncate:
         to_plot = to_plot.iloc[:-config["extended_hours"]]
 
+    if "-full.nc" in fn:
+        to_plot = to_plot.resample("W").mean()
+
     to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
 
-    to_plot.plot(ax=ax)
+    factor = {"hydrogen_energy" : 1e6,
+              "battery_energy" : 1e3}
+    unit = {"hydrogen_energy" : "TWh",
+            "battery_energy" : "GWh"}
 
-    ax.set_ylabel("storage state of charge [TWh]")
-    ax.set_xlabel("")
-    ax.set_ylim([-0.5,1.05*to_plot.max().max()])
+    for i,col in enumerate(["hydrogen_energy","battery_energy"]):
+        ax = axes[i]
+        (to_plot[col]/factor[col]).plot(ax=ax,color=color)
+
+        ax.set_ylabel(f"energy [{unit[col]}]")
+        ax.set_xlabel("")
+        ax.set_ylim([0.,1.05*to_plot[col].max()/factor[col]])
+        ax.set_title(f"{col[:-7]} storage state of charge")
 
     graphic_fn = f"{results_dir}/{fn[:-3]}-state_of_charge"
 
@@ -183,6 +194,9 @@ def plot_price(n, fn):
     if truncate:
         to_plot = to_plot.iloc[:-config["extended_hours"]]
 
+    if "-full.nc" in fn:
+        to_plot = to_plot.resample("W").mean()
+
     to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
 
     to_plot.plot(ax=ax)
@@ -190,6 +204,7 @@ def plot_price(n, fn):
     ax.set_ylabel("electricity price [€/MWh]")
     ax.set_xlabel("")
     ax.set_ylim([-0.5,1.05*to_plot.max()])
+    ax.set_title(f"electricity price")
 
     graphic_fn = f"{results_dir}/{fn[:-3]}-price"
 
@@ -220,7 +235,7 @@ def plot_all_networks(results_dir):
             if os.path.isfile(pdf_fn) and (os.path.getmtime(pdf_fn) > os.path.getmtime(os.path.join(results_dir,fn))):
                 continue
             else:
-                print(f"calculating new plots for {pdf_fn}")
+                print(f"calculating new plots for {fn}")
                 n = safe_pypsa_import(f"{results_dir}/{fn}")
                 plot_network(n, fn)
 

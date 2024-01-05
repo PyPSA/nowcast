@@ -83,8 +83,10 @@ weeks_to_plot: 10
 color:
   battery_charger: '#999999'
   battery_discharger: '#999999'
+  battery_energy: '#999999'
   hydrogen_electrolyser: cyan
   hydrogen_turbine: red
+  hydrogen_energy: magenta
   load: k
   load_shedding: k
   offshore: '#5D83A4'
