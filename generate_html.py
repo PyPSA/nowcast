@@ -57,12 +57,12 @@ def generate_html(config):
 
     statistics = pd.read_csv(os.path.join(results_dir,f"{ct}-full-statistics.csv"),
                              index_col=0).squeeze()
+    statistics.index = statistics.index.str.replace("€","&euro;")
     statistics = statistics.to_dict(into=OrderedDict)
 
     # load the `index.jinja` template
     index_template = env.get_template('template.html')
-    output_from_parsed_template = index_template.render(name=config["name"],
-                                                        future_capacities=config["future_capacities"][ct],
+    output_from_parsed_template = index_template.render(config=config,
                                                         current_capacities=current_capacities,
                                                         results_dir=results_dir,
                                                         weeks=weeks,

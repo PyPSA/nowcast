@@ -9,7 +9,7 @@
     <div class="container">
       <div class="row">
 	<div class="col text-center">
-	  <h1>Nowcast: {{ name }}</h1>
+	  <h1>Nowcast: {{ config['name'] }}</h1>
 	</div>
       </div>
       <div class="row">
@@ -32,14 +32,18 @@
               <th>Future Capacity [GW or GWh]</th>
               <th>Current Capacity [GW or GWh]</th>
             </tr>
-	    {% for tech in future_capacities %}
+	    {% for tech in config['future_capacities'][ct] %}
             <tr>
               <td>{{tech}}</td>
-              <td>{{future_capacities[tech]}}</td>
+              <td>{{config['future_capacities'][ct][tech]}}</td>
               <td>{{current_capacities[tech]}}</td>
             </tr>
  	    {% endfor %}
-         </table>
+          </table>
+	  <h3>Other parameters</h2>
+	  <p>Constant hydrogen value: {{config['hydrogen_value']}} &euro;/MWh</p>
+	  <p>Value of lost load: {{config['voll']}} &euro;/MWh</p>
+	  <p>All costs and prices are in 2020 euros.</p>
 	</div>
       </div>
       <div class="row">
@@ -65,6 +69,7 @@
       <div class="row">
 	<div class="col text-center">
 	  <h2 id="statistics">Aggregated yearly statistics</h2>
+	  <p>All costs and prices are in 2020 euros. Annuities are calculated with <a href="../costs.csv">2030 cost assumptions</a> and a weighted average cost of capital (WACC) of 7%.</p>
 	  <table id="statistics_table">
             <tr>
               <th>Statistic</th>
