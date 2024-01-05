@@ -10,20 +10,37 @@
       <div class="row">
 	<div class="col text-center">
 	  <h1>Nowcast: Tomorrow's power system with today's weather</h1>
-	  <p>We simulate how a renewable power system of tomorrow
+	  <p>This website simulates how a renewable power system of tomorrow
 	    would behave with today's demand and weather.</p>
 	  <p>Wind and solar from today's day-ahead forecasts are scaled up to
-            projected capacities for tomorrow.</p>
+            projected capacities for tomorrow. The model can only see 24 hours ahead.</p>
           <p>The dispatch of wind, solar, batteries and
 hydrogen storage are optimised over 24 hours to meet demand. The long-term hydrogen
-storage is dispatched using a constant hydrogen value (e.g. 70 &euro;/MWh).</p>
-	  <p>Currently it only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
+storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</p>
+	  <p>Currently the website only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
 	  <p>Open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a>. Data from <a href="https://www.smard.de/home">SMARD</a>.</p>
 	  <h2>Explore scenarios</h2>
 	  <ul>
 	    {% for scenario in scenarios %}
               <li><a href="html/{{scenario}}.html">{{ scenarios[scenario]["name"] }}</a> ({{ scenarios[scenario]["description"] }})</li>
  	    {% endfor %}
+	  </ul>
+	  <h2>Warnings</h2>
+	  <p>Currently the website has many limitations. It is only a prototype; it will improve over time. Important limitations and their effects include:</p>
+	  <ul>
+	    <li>Germany is currently treated as an island; no exchanges of electricity or hydrogen are allowed with other countries. Relaxing this condition would lower costs.</li>
+	    <li>Network constraints and redispatch costs inside Germany are ignored. Including network bottlenecks would raise costs.</li>
+	    <li>In reality the value of hydrogen could change seasonally, like natural gas does, and also be affected by other hydrogen demands (e.g. in industry) and hydrogen trade.</li>
+	    <li>We have not assumed any demand flexibility for conventional electricity demand. Electrolysers and batteries charge based on market signals.</li>
+	    <li>Potential new demands like heat pumps, electric vehicles and hydrogen for industry are not yet implemented.</li>
+	    <li>Existing hydro and biomass electricity generation is not included.</li>
+	    <li>The future effects of climate change on weather are not considered.</li>
+	    <li>Short-term forecasting, balancing costs and other ancilliary services are ignored.</li>
+	    <li>Other generation technologies, such as geothermal, nuclear, fossil fuels with CCS, wave, solar in space, etc., are not included.</li>
+	    <li>Other storage technologies, such as iron-air batteries, etc., could lower costs.</li>
+	    <li>Scaling up existing wind profiles will underestimate yields, because new turbines achieve higher capacity factors than the average existing turbine (e.g. because of higher hub heights).</li>
+	    <li>On the other hand, locations for additional wind and solar turbines may have lower yields than the best sites today.</li>
+	    <li>Increasing wake effects for offshore wind with rising capacity are ignored.</li>
 	  </ul>
 	  <h2>Other websites that served as an inspiration</h2>
 
