@@ -14,7 +14,7 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pypsa, yaml, pandas as pd, os, pytz, datetime, sys
+import pypsa, yaml, pandas as pd, os, pytz, datetime, sys, numpy as np
 
 from concatenate_networks import safe_pypsa_import
 
@@ -218,11 +218,49 @@ def plot_price(n, fn):
 
     plt.close(fig)
 
+
+
+def plot_price_duration(n, fn):
+
+    fig, ax = plt.subplots()
+
+    fig.set_size_inches((10,4))
+
+    to_plot = n.buses_t.marginal_price["DE-electricity"].copy()
+
+    s = to_plot.sort_values(ascending=False)
+
+    s.index = 100*np.arange(len(s.index))/len(s.index)
+
+    s.plot(ax=ax)
+
+    ax.set_ylabel("electricity price [€/MWh]")
+    ax.set_xlabel("fraction of time [%]")
+    ax.set_ylim([-0.5,1.05*to_plot.max()])
+    ax.set_xlim([0,100])
+    ax.set_title("electricity price duration curve")
+
+    graphic_fn = f"{results_dir}/{fn[:-3]}-price_duration"
+
+    s.to_csv(f"{graphic_fn}.csv")
+    fig.savefig(f"{graphic_fn}.pdf",
+                transparent=True,
+                bbox_inches='tight')
+    fig.savefig(f"{graphic_fn}.png",
+                transparent=True,
+                bbox_inches='tight')
+
+    plt.close(fig)
+
+
 def plot_network(n, fn):
 
     plot_supplydemand(n, fn)
     plot_state_of_charge(n, fn)
     plot_price(n, fn)
+
+    if "-full.nc" in fn:
+        plot_price_duration(n, fn)
 
 def plot_all_networks(results_dir):
 
