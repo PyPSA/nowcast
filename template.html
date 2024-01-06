@@ -40,10 +40,9 @@
             </tr>
  	    {% endfor %}
           </table>
-	  <h3>Other parameters</h2>
-	  <p>Constant hydrogen value: {{config['hydrogen_value']}} &euro;/MWh</p>
-	  <p>Value of lost load: {{config['voll']}} &euro;/MWh</p>
-	  <p>All costs and prices are in 2020 euros.</p>
+	  <p>Constant hydrogen value: {{config['hydrogen_value']}} &euro;/MWh;
+	  Value of lost load: {{config['voll']}} &euro;/MWh.
+	  All costs and prices are in 2020 euros.</p>
 	</div>
       </div>
       <div class="row">
@@ -53,6 +52,10 @@
 	  <img src="../{{results_dir}}/{{ct}}-full-state_of_charge.png" />
 	  <img src="../{{results_dir}}/{{ct}}-full-price.png" />
 	  <img src="../{{results_dir}}/{{ct}}-full-price_duration.png" />
+	  {% for statistic in ["electricity mean price [&euro;/MWh]","System levelised cost [&euro;/MWh]"] %}
+	  <p>{{statistic}}: {{ "%.2f"|format(statistics[statistic]) }}</p>
+ 	  {% endfor %}
+	  <p><a href="#statistics">All aggregated yearly statistics</a></p>
 	</div>
       </div>
       <div class="row">
