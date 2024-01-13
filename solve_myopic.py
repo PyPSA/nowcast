@@ -81,6 +81,35 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
 
 
         n.add("Bus",
+              f"{ct}-pumped_hydro",
+              carrier="pumped_hydro")
+
+        name = f"{ct}-pumped_hydro_energy"
+        n.add("Store",
+              name,
+              bus = f"{ct}-pumped_hydro",
+              carrier="pumped_hydro_energy",
+              e_nom=future_capacities[name]*1e3,
+              e_initial=soc[name])
+
+        n.add("Link",
+              f"{ct}-pumped_hydro_charger",
+              bus0 = f"{ct}-electricity",
+              bus1 = f"{ct}-pumped_hydro",
+              carrier="pumped_hydro_charger",
+              efficiency = config["pumped_hydro_efficiency_charging"],
+              p_nom=future_capacities[f"{ct}-pumped_hydro"]*1e3)
+
+        n.add("Link",
+              f"{ct}-pumped_hydro_discharger",
+              bus0 = f"{ct}-pumped_hydro",
+              bus1 = f"{ct}-electricity",
+              carrier="pumped_hydro_discharger",
+              efficiency = config["pumped_hydro_efficiency_discharging"],
+              p_nom=future_capacities[f"{ct}-pumped_hydro"]*1e3)
+
+
+        n.add("Bus",
                     f"{ct}-battery",
                     carrier="battery")
 

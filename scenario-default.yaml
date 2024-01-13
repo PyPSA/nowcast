@@ -9,6 +9,7 @@ end_date: yesterday
 # in MWh
 soc_start:
   DE:
+    pumped_hydro_energy : 1.0e3
     battery_energy: 5.0e3
     hydrogen_energy: 7.0e7
 
@@ -18,6 +19,9 @@ future_capacities:
     onshore : 140
     pv : 280
     offshore : 40
+    hydro : 5
+    pumped_hydro : 9.6
+    pumped_hydro_energy : 50
     battery : 60
     battery_energy : 300
     hydrogen_electrolyser : 65
@@ -26,11 +30,14 @@ future_capacities:
 
 battery_power_efficiency_charging: 0.97
 battery_power_efficiency_discharging: 0.97
+pumped_hydro_efficiency_charging: 0.9
+pumped_hydro_efficiency_discharging: 0.9
 hydrogen_electrolyser_efficiency: 0.68
 hydrogen_turbine_efficiency: 0.58
 mc-offshore: 0.3
 mc-onshore: 0.2
 mc-pv: 0.1
+mc-hydro: 0.05
 
 # load-shedding in EUR/MWh
 voll: 1000.
