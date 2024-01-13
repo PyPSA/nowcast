@@ -27,9 +27,16 @@ def extend_df(df,hours):
     return extended_df
 
 def interpolate_historical_capacities(config, ct, date_index):
+
     df = pd.DataFrame(config["historical_capacities"][ct]).T
     df.index = pd.to_datetime(df.index)
-    return df.reindex(date_index).interpolate(limit_direction="both")
+
+    big_date_index = pd.date_range(start=min(df.index[0], date_index[0]),
+                                   end=max(df.index[-1], date_index[-1]))
+
+    interpolation = df.reindex(big_date_index).interpolate(limit_direction="both")
+
+    return interpolation.loc[date_index]
 
 def derive_pu_availability(current_series, current_capacities):
 
