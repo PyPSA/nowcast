@@ -13,7 +13,7 @@ countries: [DE]
 time_zone:
   DE: Europe/Berlin
 
-vre_techs: [pv, onshore, offshore]
+vre_techs: [pv, onshore, offshore, hydro]
 
 
 # in GW or GWh
@@ -24,42 +24,52 @@ historical_capacities:
       onshore : 37.6
       pv : 37.9
       offshore : 1.
+      hydro: 4.0
     2015-12-31:
       onshore : 41.3
       pv : 39.2
       offshore : 3.3
+      hydro: 3.9
     2016-12-31:
       onshore : 45.3
       pv : 40.7
       offshore : 4.2
+      hydro: 4.0
     2017-12-31:
       onshore : 50.2
       pv : 42.3
       offshore : 5.4
+      hydro: 3.8
     2018-12-31:
       onshore : 52.3
       pv : 45.2
       offshore : 6.4
+      hydro: 3.9
     2019-12-31:
       onshore : 53.2
       pv : 48.9
       offshore : 7.6
+      hydro: 4.9
     2020-12-31:
       onshore : 54.3
       pv : 54.4
       offshore : 7.8
+      hydro: 4.9
     2021-12-31:
       onshore : 55.9
       pv : 60.1
       offshore : 7.8
+      hydro: 4.9
     2022-12-31:
       onshore : 58.0
       pv : 67.6
       offshore : 8.2
+      hydro: 4.9
     2023-12-30:
       onshore : 60.7
       pv : 80.7
       offshore : 8.4
+      hydro: 4.9
 
 
 solver_logfile: myopic.log
@@ -93,3 +103,4 @@ color:
   offshore: '#5D83A4'
   onshore: '#3B6182'
   pv: '#FFFF00'
+  hydro: green

@@ -21,7 +21,8 @@ import pandas as pd, pytz, yaml, os, datetime, requests, re
 data_to_retrieve = {"DE-load" : 410,
                     "DE-pv" : 125,
                     "DE-onshore" : 123,
-                    "DE-offshore" : 3791}
+                    "DE-offshore" : 3791,
+                    "DE-hydro" : 1226}
 
 
 
