@@ -73,6 +73,7 @@ solver_options:
     threads: 4
   highs:
     threads: 4
+    solver: ipm
   cbc:
     threads: 4
 

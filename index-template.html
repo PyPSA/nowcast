@@ -18,7 +18,7 @@
 hydrogen storage are optimised over 24 hours to meet demand. The long-term hydrogen
 storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</p>
 	  <p>Currently the website only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
-	  <p>Open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a>. Open data from <a href="https://www.smard.de/home">SMARD</a>.</p>
+	  <p>Open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a>. Open data from <a href="https://www.smard.de/home">SMARD</a>. All results released openly under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>.</p>
 	  <h2>Explore scenarios</h2>
 	  <ul>
 	    {% for scenario in scenarios %}
@@ -35,18 +35,22 @@ storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</
 	    <li>Potential new demands like heat pumps, electric vehicles and hydrogen for industry are not yet implemented.</li>
 	    <li>Existing hydro and biomass electricity generation is not included.</li>
 	    <li>The future effects of climate change on weather are not considered.</li>
-	    <li>Short-term forecasting, balancing costs and other ancilliary services are ignored.</li>
+	    <li>Short-term forecasting errors, balancing costs and other ancilliary services are ignored.</li>
 	    <li>Other generation technologies, such as geothermal, nuclear, fossil fuels with CCS, wave, solar in space, etc., are not included.</li>
 	    <li>Other storage technologies, such as iron-air batteries, etc., could lower costs.</li>
 	    <li>Scaling up existing wind profiles will underestimate yields, because new turbines achieve higher capacity factors than the average existing turbine (e.g. because of higher hub heights).</li>
-	    <li>On the other hand, locations for additional wind and solar turbines may have lower yields than the best sites today.</li>
+	    <li>On the other hand, locations for additional wind and solar turbines may have lower yields than the sites used today.</li>
 	    <li>Increasing wake effects for offshore wind with rising capacity are ignored.</li>
+	    <li>The time series for load, wind and solar from <a href="https://www.smard.de/home">SMARD</a> are assumed to represent reality and are not corrected before scaling up to the future renewable capacities. The <a href="https://www.agora-energiewende.de/service/agorameter">Agorameter</a> and <a href="https://www.energy-charts.info/">energy-charts</a> make some corrections to the live data; it seems the strongest effect is on hydro, which needs some upscaling.</li>
 	  </ul>
 	  <h2>Other websites that served as an inspiration</h2>
 
 	  <p><a href="https://reneweconomy.com.au/a-near-100-per-cent-renewables-grid-is-well-within-reach-and-with-little-storage/">David Osmond's simulations for highly renewable Australia</a></p>
 	  <p><a href="https://www.agora-energiewende.de/service/agorameter">Agora Energiewende future-o-meter for Germany</a></p>
-	  <p><a href="https://www.energy-charts.info/charts/remod_installed_power/chart.htm?l=en&c=DE">energy-charts REMod scenarios</a> (doesn't use live weather)</p>
+	  <p><a href="https://www.energy-charts.info/charts/power_simulated/chart.htm?l=en&c=DE">Energy-Charts future simulations</a></p>
+	  <p><a href="https://www.energy-charts.info/charts/remod_installed_power/chart.htm?l=en&c=DE">Energy-Charts REMod scenarios</a> (doesn't use live weather for future scenarios)</p>
+	  <h2>Software and data licence</h2>
+	  <p>The open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a> is released under the GNU Affero General Public Licence (AGPL). Open data from <a href="https://www.smard.de/home">SMARD</a> is released under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Licence</a> (CC BY). All data available on this website is also available under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Licence</a> (CC BY).</p>
 	</div>
       </div>
     </div>
