@@ -14,7 +14,7 @@
 	    would behave with today's demand and weather.</p>
 	  <p>Wind and solar from today's day-ahead forecasts are scaled up to
             projected capacities for tomorrow. <b>The model can only see 24 hours ahead.</b></p>
-          <p>The dispatch of wind, solar, batteries and
+          <p>The dispatch of wind, solar, existing hydroelectricity, batteries and
 hydrogen storage are optimised over 24 hours to meet demand. The long-term hydrogen
 storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</p>
 	  <p>Currently the website only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
@@ -25,6 +25,11 @@ storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</
               <li><a href="html/{{scenario}}.html">{{ scenarios[scenario]["name"] }}</a> ({{ scenarios[scenario]["description"] }})</li>
  	    {% endfor %}
 	  </ul>
+	  <h2>Technical details</h2>
+	  <p>The demand is taken as the network load (Netzlast) from <a href="https://www.smard.de/home">SMARD</a>. No corrections are applied.</p>
+	  <p>For the solar PV, wind onshore, wind offshore and hydroelectric generation, the generation time series are taken from <a href="https://www.smard.de/home">SMARD</a>. Since they don't reflect all generators (particularly for hydroelectricity, but also for solar PV), they are corrected by yearly correction factors based on the net generation statistics from <a href="https://ag-energiebilanzen.de/daten-und-fakten/zusatzinformationen/">AG Energiebilanzen e.V.</a>. For the current year, the previous year's correction factor is used. You can check out the <a href="./correction_factors.csv">correction factors</a>.</p>
+	  <p>This correction scheme for generation follows the <a href="https://www.agora-energiewende.org/fileadmin/Projekte/Agorameter/2023-10-01_Hintergrunddokumentation_Agorameter_v13_EN.pdf">Agorameter</a>.</p>
+	  <p>The time series are then scaled down to per unit time series using the historical capacities reported by <a href="https://www.energy-charts.info/">energy-charts</a>, before being scaled back up to their projected capacities.</p>
 	  <h2>Warnings</h2>
 	  <p>Currently the website has many limitations. It is only a prototype; it will improve over time. Important limitations and their effects include:</p>
 	  <ul>
@@ -33,7 +38,7 @@ storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</
 	    <li>In reality the value of hydrogen could change seasonally, like natural gas does, and also be affected by other hydrogen demands (e.g. in industry) and hydrogen trade.</li>
 	    <li>We have not assumed any demand flexibility for conventional electricity demand. Electrolysers and batteries charge based on market signals.</li>
 	    <li>Potential new demands like heat pumps, electric vehicles and hydrogen for industry are not yet implemented.</li>
-	    <li>Existing hydro and biomass electricity generation is not included.</li>
+	    <li>Existing biomass electricity generation is not included, because biomass should be restricted to sustainable sources and prioritised for sectors like industrial feedstocks and long-distance aviation rather than electricity.</li>
 	    <li>The future effects of climate change on weather are not considered.</li>
 	    <li>Short-term forecasting errors, balancing costs and other ancilliary services are ignored.</li>
 	    <li>Other generation technologies, such as geothermal, nuclear, fossil fuels with CCS, wave, solar in space, etc., are not included.</li>
@@ -41,7 +46,6 @@ storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</
 	    <li>Scaling up existing wind profiles will underestimate yields, because new turbines achieve higher capacity factors than the average existing turbine (e.g. because of higher hub heights).</li>
 	    <li>On the other hand, locations for additional wind and solar turbines may have lower yields than the sites used today.</li>
 	    <li>Increasing wake effects for offshore wind with rising capacity are ignored.</li>
-	    <li>The time series for load, wind and solar from <a href="https://www.smard.de/home">SMARD</a> are assumed to represent reality and are not corrected before scaling up to the future renewable capacities. The <a href="https://www.agora-energiewende.de/service/agorameter">Agorameter</a> and <a href="https://www.energy-charts.info/">energy-charts</a> make some corrections to the live data; it seems the strongest effect is on hydro, which needs some upscaling.</li>
 	  </ul>
 	  <h2>Other websites that served as an inspiration</h2>
 

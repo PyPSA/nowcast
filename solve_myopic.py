@@ -237,7 +237,7 @@ def solve_all(config):
         print("using previous soc:")
         print(soc)
 
-        weather_fn = f"{config['weather_dir']}/{ct}-day-{date_string}.csv"
+        weather_fn = f"{config['weather_dir']}/{ct}-day-{date_string}-corrected.csv"
         if not os.path.isfile(weather_fn):
             print(f"{weather_fn} is missing, skipping {date_string}")
             continue
