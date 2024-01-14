@@ -16,14 +16,14 @@ soc_start:
 # in GW or GWh
 future_capacities:
   DE:
-    onshore : 140
-    pv : 280
+    onshore : 130
+    pv : 270
     offshore : 40
     hydro : 5
     pumped_hydro : 9.6
     pumped_hydro_energy : 50
-    battery : 60
-    battery_energy : 300
+    battery : 50
+    battery_energy : 250
     hydrogen_electrolyser : 65
     hydrogen_turbine : 65
     hydrogen_energy : 100000
@@ -43,7 +43,7 @@ mc-hydro: 0.05
 voll: 1000.
 
 # constant value of H2 in EUR/MWh
-hydrogen_value: 60.
+hydrogen_value: 80.
 
 # extend last hour so no end-of-horizon effects
 extended_hours: 6
