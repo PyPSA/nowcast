@@ -21,7 +21,7 @@ storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</
 	  <p>Open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a>. Open data from <a href="https://www.smard.de/home">SMARD</a>. All results released openly under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>.</p>
 	  <h2>Explore scenarios</h2>
 	  <ul>
-	    {% for scenario in scenarios %}
+	    {% for scenario in scenario_order %}
               <li><a href="html/{{scenario}}.html">{{ scenarios[scenario]["name"] }}</a> ({{ scenarios[scenario]["description"] }})</li>
  	    {% endfor %}
 	  </ul>

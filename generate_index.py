@@ -15,7 +15,7 @@
 
 from jinja2 import Template, Environment, FileSystemLoader
 
-import yaml, os
+import yaml, os, pandas as pd
 
 # load templates folder to environment (security measure)
 env = Environment(loader=FileSystemLoader('./'))
@@ -35,9 +35,21 @@ def generate_index():
 
     print(scenarios)
 
+    with open('config.yaml', 'r') as file:
+        config = yaml.safe_load(file)
+
+    preferred_order = pd.Index(config["preferred_scenario_order"])
+
+    scenario_order = pd.Index(list(scenarios.keys()))
+
+    new_scenario_order = preferred_order.intersection(scenario_order).append(scenario_order.difference(preferred_order))
+
+    print(new_scenario_order)
+
     # load the `index.jinja` template
     index_template = env.get_template('index-template.html')
-    output_from_parsed_template = index_template.render(scenarios=scenarios)
+    output_from_parsed_template = index_template.render(scenarios=scenarios,
+                                                        scenario_order=list(new_scenario_order))
 
     # write the parsed template
     with open(f"index.html", "w") as chap_page:

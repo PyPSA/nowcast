@@ -74,7 +74,7 @@ historical_capacities:
 
 solver_logfile: myopic.log
 #order of preference
-solver_names: [cbc,gurobi]
+solver_names: [gurobi,cbc]
 solver_options:
   gurobi:
     BarConvTol: 1.0e-08
@@ -84,12 +84,23 @@ solver_options:
   highs:
     threads: 4
     solver: ipm
+    run_crossover: "off"
+    small_matrix_value: 1e-6
+    large_matrix_value: 1e9
+    primal_feasibility_tolerance: 1e-5
+    dual_feasibility_tolerance: 1e-5
+    ipm_optimality_tolerance: 1e-4
+    parallel: "on"
+    random_seed: 123
+
   cbc:
     threads: 4
 
 numerical_threshold: 1.e-2
 
 weeks_to_plot: 10
+
+preferred_scenario_order: [default, lessvre, lowwind, nowind]
 
 color:
   battery_charger: '#999999'
