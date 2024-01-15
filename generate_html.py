@@ -47,7 +47,9 @@ def generate_html(config):
 
     current_capacities = pd.DataFrame(config["historical_capacities"][ct]).T
     current_capacities = current_capacities.iloc[-1].to_dict()
-    current_capacities.update({"battery" : "<1",
+    current_capacities.update({"pumped_hydro" : 9.6,
+                               "pumped_hydro_energy" : 50,
+                               "battery" : "<1",
                                "battery_energy" : "<10",
                                "hydrogen_electrolyser" : "<1",
                                "hydrogen_turbine" : 0,
