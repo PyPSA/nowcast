@@ -100,6 +100,8 @@ numerical_threshold: 1.e-2
 
 weeks_to_plot: 10
 
+days_to_plot: 10
+
 preferred_scenario_order: [default, lessvre, lowwind, nowind]
 
 color:
