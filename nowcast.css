@@ -1,0 +1,202 @@
+/* Show standard navbar at the top on narrow screens */
+@media (max-width: 991.98px) {
+    header {
+        padding: 100px 0 50px;
+    }
+    .toc-col {
+        visibility: collapse;
+    }
+}
+
+/* Show scrolling navbar to the left on wide screens */
+@media (min-width: 991.98px) {
+    #mainNav {
+        visibility: hidden;
+    }
+    header {
+        padding: 50px 0 50px;
+    }
+}
+
+#toc {
+  padding-top: 50px;
+}
+
+.container-like {
+    max-width: 1140px;
+    font-size: 1.25rem;
+    font-weight: 300;
+}
+
+section {
+  padding-top: 50px;
+}
+
+#mapid {
+    width: 100%;
+    height: 550px;
+}
+
+#solve-button {
+    width: 100px;
+}
+
+#status-button {
+    text-align: left;
+}
+
+#demo-button {
+    float: right;
+}
+
+#status {
+    color: red;
+}
+
+#weather-status {
+    color: red;
+}
+
+
+#results {
+    float: left;
+    width: 1100px;
+}
+
+
+/* Clear floats after the columns */
+#results:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+#average_cost_div {
+    float: left;
+    width: 200px;
+}
+
+#power_capacity_bar_div {
+    float: left;
+    width: 550px;
+}
+
+#energy_capacity_bar_div {
+    float: left;
+    width: 350px;
+}
+
+#energy {
+    float: left;
+    width: 111px;
+}
+
+#power_capacity {
+    float: left;
+    width: 111px;
+}
+
+#energy_capacity {
+    float: left;
+    width: 111px;
+}
+
+#legend {
+    float: left;
+    width: 150px;
+}
+
+
+#graph {
+    float: left;
+    width: 1100px;
+}
+
+
+#jumpmenu {
+    width: 160px;
+}
+
+#end {
+    float: left;
+    width: 1100px;
+}
+
+
+.tab_asset {
+    text-align: left;
+}
+
+.area {
+    opacity: 0.8;
+    clip-path: url(#clip);
+}
+
+.zoom {
+    cursor: move;
+    fill: none;
+    pointer-events: all;
+}
+
+
+.tab_data {
+    text-align: right;
+}
+
+#tab_results th, td {
+    font-size: 85%;
+    padding: 5px;
+}
+
+.d3-tip {
+    line-height: 1;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.bar-label {
+    font-size: 12px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+/* Style northward tooltips specifically */
+.d3-tip.n:after {
+    margin: -2px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+
+
+input[type=text]{
+    background-color: #fff;
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: #fff;
+    opacity: 1;
+}
+
+
+th, td {
+    padding-right: 15px;
+}
+
+td.select_scenario {
+    text-align: center;
+}

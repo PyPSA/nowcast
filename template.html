@@ -2,31 +2,57 @@
 <html lang="en">
   <head>
     <title>Nowcast</title>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../nowcast.css">
   </head>
-  <body>
-    <div class="container">
-      <div class="row">
-	<div class="col text-center">
-	  <h1>Nowcast: {{ config['name'] }}</h1>
-	</div>
+  <body id="page-top">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">model.energy</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#future_capacities">Future capacities in {{ct}}</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#full_simulation">Full simulation</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#weeks">Past {{n_weeks}} weeks</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#statistics">Aggregated yearly statistics</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#full_data">All data &amp; licence</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="row">
-	<div class="col text-center">
-	  <ul>
-	    <li><a href="#future_capacities">Future capacities in {{ct}}</a></li>
-	    <li><a href="#full_simulation">Full simulation</a></li>
-	    <li><a href="#weeks">Past {{n_weeks}} weeks</a></li>
-	    <li><a href="#statistics">Aggregated yearly statistics</a></li>
-	    <li><a href="../{{results_dir}}/">Folder of all outputs</a></li>
-	  </ul>
-	  <p>All data available on this website is available openly under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Licence</a> (CC BY).</p>
-	</div>
+    </nav>
+
+    <header class="bg-primary text-white">
+      <div class="container text-center">
+	<h1>Nowcast: {{ config['name'] }}</h1>
       </div>
+    </header>
+    <div class="container-fluid">
       <div class="row">
-	<div class="col text-center">
-	  <h2 id="future_capacities">Future capacities in {{ct}}</h2>
+	<! -- next three lines just provide some padding on left in case want to insert TOC -->
+      <div class="col-md-2 toc-col">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div class="col-md-12 col-lg-9">
+        <div class="container-like">
+	  <section id="future_capacities">
+	  <h2>Future capacities in {{ct}}</h2>
 	  <table id="results_table">
             <tr>
               <th>Technology</th>
@@ -44,11 +70,9 @@
 	  <p>Constant hydrogen value: {{config['hydrogen_value']}} &euro;/MWh;
 	  Value of lost load: {{config['voll']}} &euro;/MWh.
 	  All costs and prices are in 2020 euros.</p>
-	</div>
-      </div>
-      <div class="row">
-	<div class="col text-center">
-	  <h2 id="full_simulation">Full simulation (weekly averages)</h2>
+	  </section>
+	  <section id="full_simulation">
+	  <h2>Full simulation (weekly averages)</h2>
 	  <img src="../{{results_dir}}/{{ct}}-full-supplydemand.png" />
 	  <img src="../{{results_dir}}/{{ct}}-full-state_of_charge.png" />
 	  <img src="../{{results_dir}}/{{ct}}-full-price.png" />
@@ -57,22 +81,18 @@
 	  <p>{{statistic}}: {{ "%.2f"|format(statistics[statistic]) }}</p>
  	  {% endfor %}
 	  <p><a href="#statistics">All aggregated yearly statistics</a></p>
-	</div>
-      </div>
-      <div class="row">
-	<div class="col text-center">
-	  <h2 id="weeks">Past {{n_weeks}} weeks</h2>
+	  </section>
+	  <section id="weeks">
+	  <h2>Past {{n_weeks}} weeks</h2>
 	  {% for week in weeks %}
 	  <h3>Week {{week}}</h3>
 	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-supplydemand.png" />
 	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-state_of_charge.png" />
 	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-price.png" />
  	  {% endfor %}
-	</div>
-      </div>
-      <div class="row">
-	<div class="col text-center">
-	  <h2 id="statistics">Aggregated yearly statistics</h2>
+	  </section>
+	  <section id="statistics">
+	  <h2>Aggregated yearly statistics</h2>
 	  <p>All costs and prices are in 2020 euros. Annuities are calculated with <a href="../costs.csv">2030 cost assumptions</a> and a weighted average cost of capital (WACC) of 7%.</p>
 	  <table id="statistics_table">
             <tr>
@@ -86,8 +106,39 @@
             </tr>
  	    {% endfor %}
          </table>
+	  </section>
+	  <section id="full_data">
+	  <h2>All data &amp; licence</h2>
+	  <p><a href="../{{results_dir}}/">Folder of all outputs</a></p>
+	  <p>All data available on this website is available openly under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Licence</a> (CC BY).</p>
+	  </section>
 	</div>
       </div>
     </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+    <script src="../jquery.easing.min.js"></script>
+    <script src="../scrolling-nav.js"></script>
+    <script type="text/javascript">
+      // Determine which navbar to assign scrollspy depending on window width
+      if ($(window).width() >= 992) {
+        $(function() {
+          var navSelector = "#toc";
+          var $myNav = $(navSelector);
+          Toc.init($myNav);
+          $("body").scrollspy({
+            target: navSelector
+          });
+        });
+      } else {
+        $('body').scrollspy({
+          target: '#mainNav',
+          offset: 56
+        });
+      }
+    </script>
   </body>
-  </html>
+</html>

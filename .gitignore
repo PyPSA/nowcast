@@ -7,3 +7,5 @@
 !scenario-default.yaml
 !index-template.html
 !template.html
+!*.css
+!*.js

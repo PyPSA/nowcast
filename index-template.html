@@ -2,14 +2,57 @@
 <html lang="en">
   <head>
     <title>Nowcast</title>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css"/>
+    <link rel="stylesheet" type="text/css" href="./nowcast.css">
   </head>
-  <body>
-    <div class="container">
-      <div class="row">
-	<div class="col text-center">
+
+  <body id="page-top">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">model.energy</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#intro">Introduction</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#explore">Explore scenarios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#warnings">Warnings</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#links">Similar websites</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#licence">Software &amp; data licence</a>
+            </li>
+          </ul>
+	</div>
+      </div>
+    </nav>
+    <header class="bg-primary text-white">
+      <div class="container text-center">
 	  <h1>Nowcast: Tomorrow's power system with today's weather</h1>
+      </div>
+    </header>
+    <div class="container-fluid">
+      <div class="row">
+	<! -- next three lines just provide some padding on left in case want to insert TOC -->
+      <div class="col-md-2 toc-col">
+        <nav id="toc" class="sticky-top"></nav>
+      </div>
+      <div class="col-md-12 col-lg-9">
+        <div class="container-like">
+	  <section id="intro">
+	  <h2>Introduction</h2>
+
 	  <p>This website simulates how a renewable power system of tomorrow
 	    would behave with today's demand and weather.</p>
 	  <p>Wind and solar from today's day-ahead forecasts are scaled up to
@@ -19,17 +62,23 @@ hydrogen storage are optimised over 24 hours to meet demand. The long-term hydro
 storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</p>
 	  <p>Currently the website only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
 	  <p>Open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a>. Open data from <a href="https://www.smard.de/home">SMARD</a>. All results released openly under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY</a>.</p>
-	  <h2>Explore scenarios</h2>
+	    </section>
+            <section id="explore">
+	    <h2>Explore scenarios</h2>
 	  <ul>
 	    {% for scenario in scenario_order %}
               <li><a href="html/{{scenario}}.html">{{ scenarios[scenario]["name"] }}</a> ({{ scenarios[scenario]["description"] }})</li>
  	    {% endfor %}
 	  </ul>
+	    </section>
+	    <section id="technical">
 	  <h2>Technical details</h2>
 	  <p>The demand is taken as the network load (Netzlast) from <a href="https://www.smard.de/home">SMARD</a>. No corrections are applied.</p>
 	  <p>For the solar PV, wind onshore, wind offshore and hydroelectric generation, the generation time series are taken from <a href="https://www.smard.de/home">SMARD</a>. Since they don't reflect all generators (particularly for hydroelectricity, but also for solar PV), they are corrected by yearly correction factors based on the net generation statistics from <a href="https://ag-energiebilanzen.de/daten-und-fakten/zusatzinformationen/">AG Energiebilanzen e.V.</a>. For the current year, the previous year's correction factor is used. You can check out the <a href="./correction_factors.csv">correction factors</a>.</p>
 	  <p>This correction scheme for generation follows the <a href="https://www.agora-energiewende.org/fileadmin/Projekte/Agorameter/2023-10-01_Hintergrunddokumentation_Agorameter_v13_EN.pdf">Agorameter</a>.</p>
 	  <p>The time series are then scaled down to per unit time series using the historical capacities reported by <a href="https://www.energy-charts.info/">energy-charts</a>, before being scaled back up to their projected capacities.</p>
+	    </section>
+	    <section id="warnings">
 	  <h2>Warnings</h2>
 	  <p>Currently the website has many limitations. It is only a prototype; it will improve over time. Important limitations and their effects include:</p>
 	  <ul>
@@ -47,16 +96,46 @@ storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</
 	    <li>On the other hand, locations for additional wind and solar turbines may have lower wind speeds and insolation than the sites used today.</li>
 	    <li>Increasing wake effects for offshore wind with rising capacity are ignored.</li>
 	  </ul>
+	    </section>
+	    <section id="links">
 	  <h2>Other websites that served as an inspiration</h2>
 
 	  <p><a href="https://reneweconomy.com.au/a-near-100-per-cent-renewables-grid-is-well-within-reach-and-with-little-storage/">David Osmond's simulations for highly renewable Australia</a></p>
 	  <p><a href="https://www.agora-energiewende.de/service/agorameter">Agora Energiewende future-o-meter for Germany</a></p>
 	  <p><a href="https://www.energy-charts.info/charts/power_simulated/chart.htm?l=en&c=DE">Energy-Charts future simulations</a></p>
 	  <p><a href="https://www.energy-charts.info/charts/remod_installed_power/chart.htm?l=en&c=DE">Energy-Charts REMod scenarios</a> (doesn't use live weather for future scenarios)</p>
+	    </section>
+	    <section id="licence">
 	  <h2>Software and data licence</h2>
 	  <p>The open source code on <a href="https://github.com/PyPSA/nowcast">GitHub</a> is released under the GNU Affero General Public Licence (AGPL). Open data from <a href="https://www.smard.de/home">SMARD</a> is released under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Licence</a> (CC BY). All data available on this website is also available under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International Licence</a> (CC BY).</p>
+	    </section>
+	  </div>
 	</div>
       </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
+    <script src="./jquery.easing.min.js"></script>
+    <script src="./scrolling-nav.js"></script>
+    <script type="text/javascript">
+      // Determine which navbar to assign scrollspy depending on window width
+      if ($(window).width() >= 992) {
+        $(function() {
+          var navSelector = "#toc";
+          var $myNav = $(navSelector);
+          Toc.init($myNav);
+          $("body").scrollspy({
+            target: navSelector
+          });
+        });
+      } else {
+        $('body').scrollspy({
+          target: '#mainNav',
+          offset: 56
+        });
+      }
+    </script>
   </body>
-  </html>
+</html>
