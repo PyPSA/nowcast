@@ -40,7 +40,7 @@
 
     <header class="bg-primary text-white">
       <div class="container text-center">
-	<h1>Nowcast: {{ config['name'] }}</h1>
+	<h1>Nowcast: {{ config['name'] }}: {{config['description']}}</h1>
       </div>
     </header>
     <div class="container-fluid">
@@ -51,6 +51,33 @@
       </div>
       <div class="col-md-12 col-lg-9">
         <div class="container-like">
+	  <section id="days">
+	    <h2>Past {{config['days_to_plot']}} days in {{ct}}</h2>
+	    <img class="wide" src="../{{results_dir}}/{{days_fn}}-supplydemand.png" />
+	    <img class="wide" src="../{{results_dir}}/{{days_fn}}-state_of_charge.png" />
+	    <img class="wide" src="../{{results_dir}}/{{days_fn}}-price.png" />
+
+	  </section>
+	  <section id="full_simulation">
+	  <h2>Full simulation (weekly averages)</h2>
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-supplydemand.png" />
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-state_of_charge.png" />
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-price.png" />
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-price_duration.png" />
+	  {% for statistic in ["electricity mean price [&euro;/MWh]","System levelised cost [&euro;/MWh]"] %}
+	  <p>{{statistic}}: {{ "%.2f"|format(statistics[statistic]) }}</p>
+ 	  {% endfor %}
+	  <p><a href="#statistics">All aggregated yearly statistics</a></p>
+	  </section>
+	  <section id="weeks">
+	  <h2>Past {{n_weeks}} weeks</h2>
+	  {% for week in weeks %}
+	  <h3>Week {{week}}</h3>
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-week-{{week}}-supplydemand.png" />
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-week-{{week}}-state_of_charge.png" />
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-week-{{week}}-price.png" />
+ 	  {% endfor %}
+	  </section>
 	  <section id="future_capacities">
 	  <h2>Future capacities in {{ct}}</h2>
 	  <table id="results_table">
@@ -70,26 +97,6 @@
 	  <p>Constant hydrogen value: {{config['hydrogen_value']}} &euro;/MWh;
 	  Value of lost load: {{config['voll']}} &euro;/MWh.
 	  All costs and prices are in 2020 euros.</p>
-	  </section>
-	  <section id="full_simulation">
-	  <h2>Full simulation (weekly averages)</h2>
-	  <img src="../{{results_dir}}/{{ct}}-full-supplydemand.png" />
-	  <img src="../{{results_dir}}/{{ct}}-full-state_of_charge.png" />
-	  <img src="../{{results_dir}}/{{ct}}-full-price.png" />
-	  <img src="../{{results_dir}}/{{ct}}-full-price_duration.png" />
-	  {% for statistic in ["electricity mean price [&euro;/MWh]","System levelised cost [&euro;/MWh]"] %}
-	  <p>{{statistic}}: {{ "%.2f"|format(statistics[statistic]) }}</p>
- 	  {% endfor %}
-	  <p><a href="#statistics">All aggregated yearly statistics</a></p>
-	  </section>
-	  <section id="weeks">
-	  <h2>Past {{n_weeks}} weeks</h2>
-	  {% for week in weeks %}
-	  <h3>Week {{week}}</h3>
-	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-supplydemand.png" />
-	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-state_of_charge.png" />
-	  <img src="../{{results_dir}}/{{ct}}-week-{{week}}-price.png" />
- 	  {% endfor %}
 	  </section>
 	  <section id="statistics">
 	  <h2>Aggregated yearly statistics</h2>

@@ -200,3 +200,7 @@ th, td {
 td.select_scenario {
     text-align: center;
 }
+
+.wide {
+    width: 100%;
+}

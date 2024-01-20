@@ -62,6 +62,15 @@ def generate_html(config):
     statistics.index = statistics.index.str.replace("€","&euro;")
     statistics = statistics.to_dict(into=OrderedDict)
 
+
+    end_date = config["end_date"]
+    if end_date == "today":
+        end_date = datetime.date.today()
+    elif end_date == "yesterday":
+        end_date = datetime.date.today() - datetime.timedelta(days=1)
+    start_date = end_date - datetime.timedelta(days=config['days_to_plot']-1)
+    days_fn = f"{ct}-days-{str(start_date)}-{str(end_date)}"
+
     # load the `index.jinja` template
     index_template = env.get_template('template.html')
     output_from_parsed_template = index_template.render(config=config,
@@ -70,6 +79,7 @@ def generate_html(config):
                                                         weeks=weeks,
                                                         n_weeks=len(weeks),
                                                         ct=ct,
+                                                        days_fn=days_fn,
                                                         statistics=statistics)
 
     # write the parsed template

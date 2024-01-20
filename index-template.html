@@ -64,10 +64,14 @@ hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hour
 	  <p>Currently the website only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
 	    </section>
             <section id="explore">
-	    <h2>Explore scenarios</h2>
+	      <h2>Explore scenarios</h2>
+	      <p>Click on scenario for full details.</p>
 	  <ul>
 	    {% for scenario in scenario_order %}
-              <li><a href="html/{{scenario}}.html">{{ scenarios[scenario]["name"] }}</a> ({{ scenarios[scenario]["description"] }})</li>
+            <li>
+	      <a href="html/{{scenario}}.html">{{ scenarios[scenario]["name"] }}</a> ({{ scenarios[scenario]["description"] }})
+	      <a href="html/{{scenario}}.html"><img class="wide" src="{{results_dir}}/{{scenario}}/{{days_fn}}" /></a>
+	    </li>
  	    {% endfor %}
 	  </ul>
 	    </section>

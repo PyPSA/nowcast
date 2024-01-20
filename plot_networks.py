@@ -127,6 +127,59 @@ def plot_supplydemand(n, fn):
                 transparent=True,
                 bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
+                dpi=200,
+                transparent=True,
+                bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_supply(n, fn):
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches((10, 2))
+
+    truncate = test_truncate(fn)
+
+    tz = config["time_zone"][ct]
+
+    color = config["color"]
+
+    supply = get_supply(n,[f"{ct}-electricity"])/1e3
+
+    if supply.sum(axis=1).abs().max() > 1e-3:
+        print("Demand-supply is violated!")
+        sys.exit()
+
+    supply.index = supply.index.tz_localize("UTC").tz_convert(tz)
+
+    if truncate:
+        supply = supply.iloc[:-config["extended_hours"]]
+
+    threshold = config["numerical_threshold"]/1e3
+
+    positive_columns = supply.columns[(supply.min() >= -threshold) & (supply > threshold).any()]
+    negative_columns = supply.columns[(supply.max() <= threshold)  & (supply < -threshold).any()]
+
+    positive = supply[positive_columns]
+    positive = positive.where(positive >= 0, 0)
+
+    negative = -supply[negative_columns]
+    negative = negative.where(negative >= 0, 0)
+
+    positive.plot.area(stacked=True,linewidth=0,color=color,ax=ax)
+    ax.set_ylabel("power [GW]")
+    ax.set_xlabel("")
+    ax.set_title("")
+    ax.get_legend().remove()
+
+    graphic_fn = f"{results_dir}/{fn[:-3]}-supply"
+
+    supply.to_csv(f"{graphic_fn}.csv")
+    fig.savefig(f"{graphic_fn}.pdf",
+                transparent=True,
+                bbox_inches='tight')
+    fig.savefig(f"{graphic_fn}.png",
+                dpi=200,
                 transparent=True,
                 bbox_inches='tight')
     plt.close(fig)
@@ -173,6 +226,7 @@ def plot_state_of_charge(n, fn):
                 transparent=True,
                 bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
+                dpi=200,
                 transparent=True,
                 bbox_inches='tight')
     plt.close(fig)
@@ -213,6 +267,7 @@ def plot_price(n, fn):
                 transparent=True,
                 bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
+                dpi=200,
                 transparent=True,
                 bbox_inches='tight')
 
@@ -247,6 +302,7 @@ def plot_price_duration(n, fn):
                 transparent=True,
                 bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
+                dpi=200,
                 transparent=True,
                 bbox_inches='tight')
 
@@ -350,6 +406,7 @@ def generate_statistics(n, fn, config):
 def plot_network(n, fn):
 
     plot_supplydemand(n, fn)
+    plot_supply(n, fn)
     plot_state_of_charge(n, fn)
     plot_price(n, fn)
 

@@ -15,7 +15,7 @@
 
 from jinja2 import Template, Environment, FileSystemLoader
 
-import yaml, os, pandas as pd
+import yaml, os, pandas as pd, datetime
 
 # load templates folder to environment (security measure)
 env = Environment(loader=FileSystemLoader('./'))
@@ -46,10 +46,23 @@ def generate_index():
 
     print(new_scenario_order)
 
+
+    end_date = config["end_date"]
+    if end_date == "today":
+        end_date = datetime.date.today()
+    elif end_date == "yesterday":
+        end_date = datetime.date.today() - datetime.timedelta(days=1)
+    start_date = end_date - datetime.timedelta(days=config['days_to_plot']-1)
+    ct = config["countries"][0]
+    days_fn = f"{ct}-days-{str(start_date)}-{str(end_date)}-supply.png"
+
     # load the `index.jinja` template
     index_template = env.get_template('index-template.html')
     output_from_parsed_template = index_template.render(scenarios=scenarios,
-                                                        scenario_order=list(new_scenario_order))
+                                                        scenario_order=list(new_scenario_order),
+                                                        results_dir=config['results_dir'],
+                                                        days_fn=days_fn)
+
 
     # write the parsed template
     with open(f"index.html", "w") as chap_page:
