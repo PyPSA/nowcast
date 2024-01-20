@@ -69,6 +69,30 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
               marginal_cost=config["voll"],
               carrier="load_shedding")
 
+        for key in future_capacities:
+            if key[:19] == f"{ct}-elastic_decrease":
+                price = float(key[20:])
+                decrease = future_capacities[key]*1e3
+                print(f"decrease: {decrease} for price {price}")
+                n.add("Generator",
+                      f"{ct}-load_decrease-{int(price)}",
+                      bus=f"{ct}-electricity",
+                      p_nom=decrease,
+                      marginal_cost=price,
+                      carrier="load_decrease")
+            elif key[:19] == f"{ct}-elastic_increase":
+                price = float(key[20:])
+                increase = future_capacities[key]*1e3
+                print(f"increase: {increase} for price {price}")
+                n.add("Generator",
+                      f"{ct}-load_increase-{int(price)}",
+                      bus=f"{ct}-electricity",
+                      p_nom=-increase,
+                      p_max_pu=0.,
+                      p_min_pu=1.,
+                      marginal_cost=price,
+                      carrier="load_increase")
+
         for vre_tech in config["vre_techs"]:
             name = f"{ct}-{vre_tech}"
             n.add("Generator",

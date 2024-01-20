@@ -77,6 +77,7 @@ hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hour
 	    </section>
 	    <section id="technical">
 	  <h2>Technical details</h2>
+	  <p>The model is updated once a day to take account of the latest day's data.</p>
 	  <p>The demand is taken as the network load (Netzlast) from <a href="https://www.smard.de/home">SMARD</a>. No corrections are applied.</p>
 	  <p>For the solar PV, wind onshore, wind offshore and hydroelectric generation, the generation time series are taken from <a href="https://www.smard.de/home">SMARD</a>. Since they don't reflect all generators (particularly for hydroelectricity, but also for solar PV), they are corrected by yearly correction factors based on the net generation statistics from <a href="https://ag-energiebilanzen.de/daten-und-fakten/zusatzinformationen/">AG Energiebilanzen e.V.</a>. For the current year, the previous year's correction factor is used. You can check out the <a href="./correction_factors.csv">correction factors</a>.</p>
 	  <p>This correction scheme for generation follows the <a href="https://www.agora-energiewende.org/fileadmin/Projekte/Agorameter/2023-10-01_Hintergrunddokumentation_Agorameter_v13_EN.pdf">Agorameter</a>.</p>
@@ -89,7 +90,7 @@ hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hour
 	    <li>Germany is currently treated as an island; no exchanges of electricity or hydrogen are allowed with other countries. Relaxing this condition would lower costs.</li>
 	    <li>Network constraints and redispatch costs inside Germany are ignored. Including network bottlenecks would raise costs.</li>
 	    <li>In reality the value of hydrogen could change seasonally, like natural gas does, and also be affected by other hydrogen demands (e.g. in industry) and hydrogen trade.</li>
-	    <li>We have not assumed any demand flexibility for conventional electricity demand. Electrolysers and batteries charge based on market signals.</li>
+	    <li>Demand flexibility for conventional electricity demand is limited to demand elasticity in some scenarios. Electrolysers and batteries charge based on market signals.</li>
 	    <li>Potential new demands like heat pumps, electric vehicles and hydrogen for industry are not yet implemented.</li>
 	    <li>Existing biomass electricity generation is not included, because biomass should be restricted to sustainable sources and prioritised for sectors like industrial feedstocks and long-distance aviation rather than electricity.</li>
 	    <li>The future effects of climate change on weather are not considered.</li>

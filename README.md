@@ -37,7 +37,7 @@ Future plans:
 
 - Extend to other countries with interconnectors
 - Include newly-electrified loads (electric vehicles, heat pumps, industry electrification, P2X)
-- Include demand-side management
+- Include more sophisticated demand-side management (currently a bit of elasticity is allowed)
 - Include other storage technologies (iron-air batteries, methanol, ammonia, etc.)
 
 ## Live website
