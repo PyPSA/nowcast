@@ -16,16 +16,17 @@
 
 import urllib.request, pandas as pd, os
 
-fn = "costs_2030.csv"
+techdata_fn = "costs_2030.csv"
 
 commit = "bc9ef42bc1d7b0313eb6cf429070d9a863502891"
 
-if not os.path.isfile(fn):
+if not os.path.isfile(techdata_fn):
 
     print("downloading:")
-    url = f'https://raw.githubusercontent.com/PyPSA/technology-data/{commit}/outputs/{fn}'
+    url = f'https://raw.githubusercontent.com/PyPSA/technology-data/{commit}/outputs/{techdata_fn}'
     print(url)
-    urllib.request.urlretrieve(url, fn)
+    urllib.request.urlretrieve(url,
+                               techdata_fn)
 
 def annuity(lifetime,rate):
     if rate == 0.:
@@ -40,13 +41,15 @@ cost_map = {'onshore': "onwind",
             'battery_energy': "battery storage",
             'hydrogen_electrolyser': "electrolysis",
             'hydrogen_turbine': "CCGT",
-            'hydrogen_energy': 'hydrogen storage underground'}
+            'hydrogen_energy': 'hydrogen storage underground',
+            'hydro': 'ror',
+            'pumped_hydro': 'PHS'}
 
 fn = "costs.csv"
 
 if not os.path.isfile(fn):
 
-    costs = pd.read_csv(fn,
+    costs = pd.read_csv(techdata_fn,
                         index_col=[0,1])
 
     df = costs.loc[cost_map.values()].value.unstack().rename({ value: key for key,value in cost_map.items()})
@@ -71,4 +74,4 @@ if not os.path.isfile(fn):
     #df["capacity"] = config["future_capacities"]["DE"]
 
 
-    df.to_csv("costs.csv")
+    df.to_csv(fn)
