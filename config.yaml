@@ -122,3 +122,4 @@ color:
   pumped_hydro_charger: '#DAF7A6'
   pumped_hydro_discharger: '#DAF7A6'
   pumped_hydro_energy: '#DAF7A6'
+  conventional: '#834333'

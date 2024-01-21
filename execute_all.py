@@ -20,6 +20,7 @@ import os, sys
 scripts_generic = [
     "download_data_smard.py",
     "correct_data_smard.py",
+    "plot_today.py",
     "generate_costs.py",
     "generate_index.py"
 ]
