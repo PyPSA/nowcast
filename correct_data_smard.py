@@ -28,14 +28,22 @@ def get_ageb_data(config, date_index):
     years = date_index.year.unique()
 
     fn = "STRERZ_Abgabe-12-2023.xlsx"
-    urlretrieve(f"https://ag-energiebilanzen.de/wp-content/uploads/2023/10/{fn}",fn)
+
+    if not os.path.isfile(fn):
+        urlretrieve(f"https://ag-energiebilanzen.de/wp-content/uploads/2023/10/{fn}",fn)
 
     ageb = pd.read_excel(fn,
                          sheet_name="STRERZ (netto)",
                          header=2,
                          index_col=1).iloc[:-6,1:]
 
+    ageb_brutto = pd.read_excel(fn,
+                                sheet_name="STRERZ (brutto)",
+                                header=2,
+                                index_col=1).iloc[:-8,1:-3]
+
     ageb.columns = ageb.columns.astype(int)
+    ageb_brutto.columns = ageb_brutto.columns.astype(int)
 
     rename = {" - Wind onshore" : "onshore",
               " - Wind offshore" : "offshore",
@@ -44,7 +52,11 @@ def get_ageb_data(config, date_index):
 
     ind = f"{ct}-" + pd.Index(config["vre_techs"])
 
-    return ageb.rename({ key : f"{ct}-{value}" for key,value in rename.items()},axis=0).loc[ind,years[:-2]].astype(float)
+    ageb_sel = ageb.rename({ key : f"{ct}-{value}" for key,value in rename.items()},axis=0).loc[ind,years[:-2]].astype(float)
+
+    ageb_sel.loc[f"{ct}-load"] = (ageb.loc["Nettostromerzeugung exkl. PSE"] + ageb_brutto.loc["Stromimportsaldo"]).loc[years[:-2]].astype(float)
+
+    return ageb_sel
 
 
 
@@ -109,8 +121,6 @@ def get_correction_factor(config, date_index):
                                     index_col=0)
 
     correction_factor.columns = correction_factor.columns.astype(int)
-
-    correction_factor.loc[f"{ct}-load"] = 1.
 
     return correction_factor
 

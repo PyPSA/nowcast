@@ -48,7 +48,7 @@ Future plans:
 
 You will need PyPSA and pandas.
 
-The solver defaults to gurobi, but other solvers can be used (see the
+The solver defaults to gurobi and cbc, but other solvers can be used (see the
 settings in the `config.yaml`).
 
 ## Running
