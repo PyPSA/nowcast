@@ -16,34 +16,7 @@
 
 import pypsa, yaml, pandas as pd, os, pytz, datetime, sys
 
-
-def safe_pypsa_import(filename):
-    """If time series are all empty, fill with zeros."""
-
-    n = pypsa.Network(filename)
-
-
-    list_attrs = {"Link" : ["p0","p1"],
-                                "Store" : ["e","p"]}
-
-    for c in n.iterate_components(list_attrs.keys()):
-        for attr in list_attrs[c.name]:
-            if c.pnl[attr].empty:
-                print(f"Since {attr} is empty for {c.list_name}, filling with zeros")
-                c.pnl[attr] = c.pnl[attr].reindex(c.df.index, axis=1).fillna(0.)
-
-    return n
-
-def concatenate(n,ni):
-
-    for c in n.iterate_components():
-        for attr in c.pnl:
-            if not c.pnl[attr].empty:
-                c.pnl[attr] = pd.concat([c.pnl[attr],getattr(ni,c.list_name + "_t")[attr]])
-
-    n.set_snapshots(n.snapshots.union(ni.snapshots))
-
-    return n
+from helpers import concatenate, safe_pypsa_import, get_date_index
 
 
 def concatenate_all(config):
@@ -56,20 +29,11 @@ def concatenate_all(config):
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
-    end_date = config["end_date"]
-
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-
-    date_index = pd.date_range(start=config["start_date"],
-                               end=end_date,
-                               tz=pytz.timezone(config["time_zone"][ct]))
-
     if os.path.isfile(full_fn):
         print("full network already exists")
         n = pypsa.Network(full_fn)
+
+    date_index = get_date_index(config)
 
     for i,date in enumerate(date_index):
 

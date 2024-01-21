@@ -19,6 +19,8 @@ import yaml, datetime, pandas as pd, sys, os
 
 from collections import OrderedDict
 
+from helpers import get_date_index, get_last_days
+
 # load templates folder to environment (security measure)
 env = Environment(loader=FileSystemLoader('./'))
 
@@ -26,15 +28,7 @@ env = Environment(loader=FileSystemLoader('./'))
 
 def generate_html(config):
 
-    end_date = config["end_date"]
-
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-
-    date_index = pd.date_range(start=config["start_date"],
-                               end=end_date)
+    date_index = get_date_index(config)
 
     isocalendar = date_index.isocalendar()
 
@@ -63,13 +57,8 @@ def generate_html(config):
     statistics = statistics.to_dict(into=OrderedDict)
 
 
-    end_date = config["end_date"]
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-    start_date = end_date - datetime.timedelta(days=config['days_to_plot']-1)
-    days_fn = f"{ct}-days-{str(start_date)}-{str(end_date)}"
+    dates = get_last_days(config).astype(str)
+    days_fn = f"{ct}-days-{dates[0]}-{dates[-1]}"
 
     # load the `index.jinja` template
     index_template = env.get_template('template.html')

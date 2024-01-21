@@ -16,7 +16,7 @@
 
 import pypsa, yaml, pandas as pd, os, pytz, datetime, sys, numpy as np
 
-from concatenate_networks import safe_pypsa_import
+from helpers import safe_pypsa_import
 
 import matplotlib.pyplot as plt
 

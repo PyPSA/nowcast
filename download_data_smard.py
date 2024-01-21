@@ -14,8 +14,9 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pandas as pd, pytz, yaml, os, datetime, requests, re
+import pandas as pd, pytz, yaml, os, datetime, requests
 
+from helpers import get_date_index, get_existing_dates
 
 # DE-load seems to be actual load rather than forecast
 data_to_retrieve = {"DE-load" : 410,
@@ -76,17 +77,6 @@ def get_week_data(data_to_retrieve, date_string, ct):
     return df
 
 
-def get_existing_dates(dir_name, pattern):
-
-    date_strings = []
-
-    for filename in os.listdir(dir_name):
-        match = re.match(pattern, filename)
-        if match:
-            date_strings.append(match.group(1))
-
-    return pd.to_datetime(sorted(date_strings))
-
 
 def get_all_data(config):
 
@@ -100,15 +90,7 @@ def get_all_data(config):
     already = get_existing_dates(dir_name,
                                  r"DE-day-(\d{4}-\d{2}-\d{2}).csv")
 
-    end_date = config["end_date"]
-
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-
-    date_index = pd.date_range(start=config["start_date"],
-                               end=end_date)
+    date_index = get_date_index(config)
 
     dates_to_process = date_index.difference(already)
 
@@ -141,7 +123,7 @@ def get_all_data(config):
 
         if df.loc[date_string].isna().any().any():
             print(f"warning, data is missing for {date_string}:")
-            print(df.loc[date_string].where(df.loc[date_string].isna()))
+            print(df.loc[date_string])
 
         df.index = df.index.tz_convert('Europe/Berlin')
         df_day = df.loc[date_string]

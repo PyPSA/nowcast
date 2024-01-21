@@ -17,6 +17,8 @@ from jinja2 import Template, Environment, FileSystemLoader
 
 import yaml, os, pandas as pd, datetime
 
+from helpers import get_last_days
+
 # load templates folder to environment (security measure)
 env = Environment(loader=FileSystemLoader('./'))
 
@@ -47,14 +49,11 @@ def generate_index():
     print(new_scenario_order)
 
 
-    end_date = config["end_date"]
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-    start_date = end_date - datetime.timedelta(days=config['days_to_plot']-1)
+    date_strings = get_last_days(config).astype(str)
+
     ct = config["countries"][0]
-    days_fn = f"{ct}-days-{str(start_date)}-{str(end_date)}-supply.png"
+
+    days_fn = f"{ct}-days-{date_strings[0]}-{date_strings[-1]}-supply.png"
 
     # load the `index.jinja` template
     index_template = env.get_template('index-template.html')

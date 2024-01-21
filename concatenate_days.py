@@ -1,4 +1,4 @@
-## Copyright 2023-4 Tom Brown
+## Copyright 2024 Tom Brown
 
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU Affero General Public License as
@@ -16,7 +16,7 @@
 
 import pypsa, yaml, pandas as pd, os, datetime, sys
 
-from concatenate_networks import concatenate, safe_pypsa_import
+from helpers import concatenate, safe_pypsa_import, get_last_days
 
 
 def concatenate_days(config):
@@ -27,21 +27,7 @@ def concatenate_days(config):
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
-    end_date = config["end_date"]
-
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-
-    start_date = end_date - datetime.timedelta(days=config['days_to_plot']-1)
-
-    date_index = pd.date_range(start=start_date,
-                               end=end_date)
-
-    date_strings = date_index.astype(str)
-    print(date_strings)
-    #date_strings = [str(date.date()) for date in dates]
+    date_strings = get_last_days(config).astype(str)
 
     extended_hours = config["extended_hours"]
 
@@ -59,7 +45,7 @@ def concatenate_days(config):
         else:
             n = concatenate(n,ni)
 
-    days_fn = f"{results_dir}/{ct}-days-{str(start_date)}-{str(end_date)}.nc"
+    days_fn = f"{results_dir}/{ct}-days-{date_strings[0]}-{date_strings[-1]}.nc"
 
     n.export_to_netcdf(days_fn)
 

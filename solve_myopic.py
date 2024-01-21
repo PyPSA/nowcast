@@ -18,7 +18,7 @@ import pypsa, yaml, pandas as pd, os, datetime, sys
 
 from shutil import copy
 
-from download_data_smard import get_existing_dates
+from helpers import get_existing_dates, get_date_index
 
 def extend_df(df,hours):
     """extend an hourly df by hours, filling forward"""
@@ -219,15 +219,7 @@ def solve_all(config):
     already = get_existing_dates(results_dir,
                                  ct + r"-day-(\d{4}-\d{2}-\d{2}).nc")
 
-    end_date = config["end_date"]
-
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-
-    date_index = pd.date_range(start=config["start_date"],
-                               end=end_date)
+    date_index = get_date_index(config)
 
     dates_to_process = date_index.difference(already)
 

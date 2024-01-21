@@ -18,19 +18,7 @@ import pandas as pd, yaml, os, datetime
 
 from urllib.request import urlretrieve
 
-from download_data_smard import get_existing_dates
-
-def get_date_index(config):
-
-    end_date = config["end_date"]
-
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-
-    return pd.date_range(start=config["start_date"],
-                         end=end_date)
+from helpers import get_date_index, get_existing_dates
 
 
 def get_ageb_data(config, date_index):

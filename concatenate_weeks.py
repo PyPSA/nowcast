@@ -16,7 +16,7 @@
 
 import pypsa, yaml, pandas as pd, os, datetime, sys
 
-from concatenate_networks import concatenate, safe_pypsa_import
+from helpers import concatenate, safe_pypsa_import, get_date_index
 
 
 def concatenate_week(date_strings, week_fn, config):
@@ -52,15 +52,7 @@ def concatenate_weeks(config):
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
-    end_date = config["end_date"]
-
-    if end_date == "today":
-        end_date = datetime.date.today()
-    elif end_date == "yesterday":
-        end_date = datetime.date.today() - datetime.timedelta(days=1)
-
-    date_index = pd.date_range(start=config["start_date"],
-                               end=end_date)
+    date_index = get_date_index(config)
 
     isocalendar = date_index.isocalendar()
 
