@@ -71,6 +71,19 @@ historical_capacities:
       offshore : 8.4
       hydro: 4.9
 
+#https://www.gesetze-im-internet.de/eeg_2014/__4.html
+targets:
+  DE:
+    2030:
+      onshore: 115
+      pv: 215
+      offshore: 30
+    2040:
+      onshore: 160
+      pv: 400
+      offshore: 55-60
+
+
 
 solver_logfile: myopic.log
 #order of preference

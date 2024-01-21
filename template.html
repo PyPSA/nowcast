@@ -79,18 +79,23 @@
  	  {% endfor %}
 	  </section>
 	  <section id="future_capacities">
-	  <h2>Future capacities in {{ct}}</h2>
+	    <h2>Future capacities in {{ct}}</h2>
+	    All units are GW for power or GWh for storage energy.
 	  <table id="results_table">
             <tr>
               <th>Technology</th>
-              <th>Future Capacity [GW or GWh]</th>
-              <th>Current Capacity [GW or GWh]</th>
+              <th>Future Capacity</th>
+              <th>Current Capacity</th>
+              <th><a href="https://www.gesetze-im-internet.de/eeg_2014/__4.html">EEG Target 2030</a></th>
+              <th><a href="https://www.gesetze-im-internet.de/eeg_2014/__4.html">EEG Target 2040</a></th>
             </tr>
 	    {% for tech in config['future_capacities'][ct] %}
             <tr>
               <td>{{tech}}</td>
               <td>{{config['future_capacities'][ct][tech]}}</td>
               <td>{{current_capacities[tech]}}</td>
+              <td>{{config['targets'][ct][2030][tech]}}</td>
+              <td>{{config['targets'][ct][2040][tech]}}</td>
             </tr>
  	    {% endfor %}
           </table>
