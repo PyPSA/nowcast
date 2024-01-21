@@ -324,13 +324,13 @@ def generate_statistics(n, fn, config):
 
     caps = pd.Series(config["future_capacities"][ct])
 
-    component_costs = (caps*costs["fixed [€/MW/a]"]/1e3).rename(lambda n: n + " yearly costs [M€/a]")
+    component_costs = (caps*costs["fixed [€/MW/a]"]/1e3).rename(lambda n: n + " yearly fixed costs [M€/a]")
 
     caps.index = [i + " capacity [GWh]" if "energy" in i else i + " capacity [GW]" for i in caps.index]
 
     s = pd.concat([s,caps,component_costs])
 
-    s["total yearly costs [M€/a]"] = component_costs.sum()
+    s["total yearly fixed costs [M€/a]"] = component_costs.sum()
 
 
     supply = get_supply(n,[f"{ct}-electricity"])
@@ -379,7 +379,7 @@ def generate_statistics(n, fn, config):
     prices1.columns = n.links.index
     revenue = (-p1*prices1 -p0*prices0).sum().groupby(n.links.index).sum()
     #mv = revenue.sum()/p.sum()
-    s = pd.concat([s,revenue.rename(lambda n: n + " yearly revenue [M€/a]")/nyears/1e6])
+    s = pd.concat([s,revenue.rename(lambda n: n + " yearly revenue minus variable costs [M€/a]")/nyears/1e6])
 
     for port in ["0","1"]:
         links = n.links.index[n.links[f"bus{port}"] == f"{ct}-electricity"]
@@ -391,7 +391,7 @@ def generate_statistics(n, fn, config):
 
     s["total yearly revenue [M€/a]"] = s[s.index.str.contains(" yearly revenue")].sum()
 
-    s["System levelised cost [€/MWh]"] = s["total yearly costs [M€/a]"]/s["load yearly dispatch [TWh/a]"]
+    s["System levelised cost [€/MWh]"] = s["total yearly fixed costs [M€/a]"]/s["load yearly dispatch [TWh/a]"]
 
     print("replacing following nans with zero")
 
