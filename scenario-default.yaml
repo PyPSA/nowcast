@@ -16,20 +16,20 @@ soc_start:
 # in GW or GWh
 future_capacities:
   DE:
-    onshore : 130
-    pv : 270
+    onshore : 150
+    pv : 280
     offshore : 40
     hydro : 5
     pumped_hydro : 9.6
     pumped_hydro_energy : 50
-    battery : 50
-    battery_energy : 250
+    battery : 20
+    battery_energy : 120
     hydrogen_electrolyser : 65
-    hydrogen_turbine : 65
+    hydrogen_turbine : 50
     hydrogen_energy : 100000
 
-battery_power_efficiency_charging: 0.97
-battery_power_efficiency_discharging: 0.97
+battery_power_efficiency_charging: 0.95
+battery_power_efficiency_discharging: 0.95
 pumped_hydro_efficiency_charging: 0.9
 pumped_hydro_efficiency_discharging: 0.9
 hydrogen_electrolyser_efficiency: 0.68
