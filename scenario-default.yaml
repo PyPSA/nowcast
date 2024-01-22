@@ -11,7 +11,7 @@ soc_start:
   DE:
     pumped_hydro_energy : 1.0e3
     battery_energy: 5.0e3
-    hydrogen_energy: 7.0e7
+    hydrogen_energy: 8.0e7
 
 # in GW or GWh
 future_capacities:
@@ -25,7 +25,7 @@ future_capacities:
     battery : 20
     battery_energy : 120
     hydrogen_electrolyser : 65
-    hydrogen_turbine : 50
+    hydrogen_turbine : 55
     hydrogen_energy : 100000
 
 battery_power_efficiency_charging: 0.95

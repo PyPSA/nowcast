@@ -36,8 +36,8 @@ def get_supply(n, buses):
             c.pnl.p[items]
             .multiply(n.snapshot_weightings.generators, axis=0)
             .multiply(c.df.loc[items, "sign"])
-           .groupby(c.df.loc[items, "carrier"],axis=1)
-            .sum()
+            .T.groupby(c.df.loc[items, "carrier"])
+            .sum().T
             )
         #s = pd.concat([s], keys=[c.list_name], axis=1)
 
@@ -56,7 +56,7 @@ def get_supply(n, buses):
 
             s = (-1) * c.pnl["p" + end][items].multiply(
                 n.snapshot_weightings.generators, axis=0
-            ).groupby(c.df.loc[items, "carrier"], axis=1).sum()
+            ).T.groupby(c.df.loc[items, "carrier"]).sum().T
             s.columns = s.columns# + end
             #s = pd.concat([s], keys=[c.list_name], axis =1)
             if supply.empty:
@@ -198,6 +198,49 @@ def plot_supply(n, fn):
                 bbox_inches='tight')
     plt.close(fig)
 
+def plot_shares(n, fn):
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches((10, 3))
+
+    truncate = test_truncate(fn)
+
+    ct = "DE"
+
+    color = config["color"]
+
+    supply = get_supply(n,[f"{ct}-electricity"])/1e3
+
+
+    s = supply.drop("load",axis=1).sum().sort_values(ascending=False)/(-supply["load"].sum())*100
+    s.drop(s.index[s.abs() < config["numerical_threshold"]], inplace=True)
+
+    bar = s.plot.bar(color=[color[i] for i in s.index],
+                     ax=ax)
+    ax.set_ylabel("share of load [%]")
+    ax.set_xlabel("")
+    ax.set_title("share of load [%]")
+
+    for i, item in enumerate(s.values):
+        yoffset = 2 if item > 0 else -6
+        ax.text(i - .2, item + yoffset, f"{item:.1f}%",
+                color = 'k',)
+
+    # Rotating X-axis labels
+    plt.xticks(rotation = 15)
+
+    graphic_fn = f"{results_dir}/{fn[:-3]}-shares"
+
+    supply.to_csv(f"{graphic_fn}.csv")
+    fig.savefig(f"{graphic_fn}.pdf",
+                transparent=True,
+                bbox_inches='tight')
+    fig.savefig(f"{graphic_fn}.png",
+                dpi=200,
+                transparent=True,
+                bbox_inches='tight')
+    plt.close(fig)
+
 def plot_state_of_charge(n, fn):
 
     truncate = test_truncate(fn)
@@ -209,7 +252,7 @@ def plot_state_of_charge(n, fn):
 
     color = config["color"]
 
-    to_plot = n.stores_t.e.groupby(n.stores.carrier, axis=1).sum()
+    to_plot = n.stores_t.e.T.groupby(n.stores.carrier).sum().T
 
     if truncate:
         to_plot = to_plot.iloc[:-config["extended_hours"]]
@@ -354,14 +397,14 @@ def generate_statistics(n, fn, config):
     vre_techs = config["vre_techs"]
 
     available = n.generators_t.p_max_pu.multiply(n.snapshot_weightings["generators"],axis=0).multiply(n.generators.p_nom_opt,axis=1)
-    available = available.groupby(n.generators.carrier,axis=1).sum()[vre_techs]
+    available = available.T.groupby(n.generators.carrier).sum().T[vre_techs]
 
     s = pd.concat([s,available.sum().rename(lambda n: n + " yearly available [TWh/a]")/nyears/1e6])
 
     cf_available = available.mean()/n.generators.p_nom_opt.groupby(n.generators.carrier).sum()[vre_techs]
     s = pd.concat([s,cf_available.rename(lambda n: n + " capacity factor available [%]")*100])
 
-    used = n.generators_t.p.groupby(n.generators.carrier,axis=1).sum()[vre_techs]
+    used = n.generators_t.p.T.groupby(n.generators.carrier).sum().T[vre_techs]
     s = pd.concat([s,used.sum().rename(lambda n: n + " yearly used [TWh/a]")/nyears/1e6])
 
 
@@ -377,7 +420,7 @@ def generate_statistics(n, fn, config):
     cf = (n.links_t.p0.mean()/n.links.p_nom_opt).groupby(n.links.carrier).mean()
     s = pd.concat([s,cf.rename(lambda n: n + " capacity factor [%]")*100])
 
-    p = n.generators_t.p.multiply(n.snapshot_weightings["generators"],axis=0).groupby(n.generators.carrier,axis=1).sum()
+    p = n.generators_t.p.multiply(n.snapshot_weightings["generators"],axis=0).T.groupby(n.generators.carrier).sum().T
     revenue = p.multiply(n.buses_t.marginal_price[f"{ct}-electricity"],axis=0)
     mv = revenue.sum()/p.sum()
 
@@ -397,7 +440,7 @@ def generate_statistics(n, fn, config):
 
     for port in ["0","1"]:
         links = n.links.index[n.links[f"bus{port}"] == f"{ct}-electricity"]
-        p = n.links_t[f"p{port}"].multiply(n.snapshot_weightings["generators"],axis=0).groupby(n.links.carrier[links],axis=1).sum()
+        p = n.links_t[f"p{port}"].multiply(n.snapshot_weightings["generators"],axis=0).T.groupby(n.links.carrier[links]).sum().T
         revenue = p.multiply(n.buses_t.marginal_price[f"{ct}-electricity"],axis=0)
         mv = revenue.sum()/p.sum()
         s = pd.concat([s,mv.rename(lambda n: n + " average market value [€/MWh]")])
@@ -420,9 +463,13 @@ def generate_statistics(n, fn, config):
 def plot_network(n, fn):
 
     plot_supplydemand(n, fn)
-    plot_supply(n, fn)
+    plot_shares(n, fn)
     plot_state_of_charge(n, fn)
     plot_price(n, fn)
+
+
+    if "-days-" in fn:
+        plot_supply(n, fn)
 
     if "-full.nc" in fn:
         plot_price_duration(n, fn)

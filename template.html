@@ -59,6 +59,7 @@
 	  <section id="days">
 	    <h2>Past {{config['days_to_plot']}} days in {{ct}}</h2>
 	    <img class="wide" src="../{{results_dir}}/{{days_fn}}-supplydemand.png" />
+	    <img class="wide" src="../{{results_dir}}/{{days_fn}}-shares.png" />
 	    <img class="wide" src="../{{results_dir}}/{{days_fn}}-state_of_charge.png" />
 	    <img class="wide" src="../{{results_dir}}/{{days_fn}}-price.png" />
 
@@ -66,6 +67,7 @@
 	  <section id="full_simulation">
 	  <h2>Full simulation (weekly averages)</h2>
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-supplydemand.png" />
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-shares.png" />
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-state_of_charge.png" />
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-price.png" />
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-price_duration.png" />
@@ -79,6 +81,7 @@
 	  {% for week in weeks %}
 	  <h3>Week {{week}}</h3>
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-week-{{week}}-supplydemand.png" />
+	  <img class="wide" src="../{{results_dir}}/{{ct}}-week-{{week}}-shares.png" />
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-week-{{week}}-state_of_charge.png" />
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-week-{{week}}-price.png" />
  	  {% endfor %}
