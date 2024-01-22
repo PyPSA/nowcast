@@ -65,7 +65,7 @@
 hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hours ahead.</b> The long-term hydrogen
 	    storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</p>
 	  <p><b>Warning:</b> This website is a thought-experiment for educational purposes, not a forecast. Please see <a href="#warnings">all other warnings</a>.</p>
-	  <p>Currently the website only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
+	  <p>Currently the website only works for Germany as an island system with today's demand. <a href="https://github.com/PyPSA/nowcast/issues">Additional features</a> will follow soon!</p>
 	    </section>
             <section id="explore">
 	      <h2>Explore scenarios</h2>
@@ -87,10 +87,11 @@ hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hour
 	  <p>For the solar PV, wind onshore, wind offshore and hydroelectric generation, the generation time series are taken from <a href="https://www.smard.de/home">SMARD</a>. Since they don't reflect all generators (particularly for hydroelectricity, but also for solar PV), they are corrected by yearly correction factors based on the net generation statistics from <a href="https://ag-energiebilanzen.de/daten-und-fakten/zusatzinformationen/">AG Energiebilanzen e.V.</a>. For the current year, the previous year's correction factor is used. You can check out the <a href="./correction_factors.csv">correction factors</a>.</p>
 	  <p>This correction scheme for load and generation follows the <a href="https://www.agora-energiewende.org/fileadmin/Projekte/Agorameter/2023-10-01_Hintergrunddokumentation_Agorameter_v13_EN.pdf">Agorameter</a>.</p>
 	  <p>The time series are then scaled down to per unit time series using the historical capacities reported by <a href="https://www.energy-charts.info/">energy-charts</a>, before being scaled back up to their projected capacities.</p>
+	  <p>Planned additional features are listed on the <a href="https://github.com/PyPSA/nowcast/issues">GitHub issue tracker</a>.</p>
 	    </section>
 	    <section id="warnings">
 	  <h2>Warnings</h2>
-	  <p>Currently the website has many limitations. It is only a prototype; it will improve over time. Important limitations and their effects include:</p>
+	  <p>Currently the website has many limitations. It is only a prototype; it will improve over time (see <a href="https://github.com/PyPSA/nowcast/issues">planned features</a>). Important limitations and their effects include:</p>
 	  <ul>
 	    <li>Germany is currently treated as an island; no exchanges of electricity or hydrogen are allowed with other countries. Relaxing this condition would lower costs.</li>
 	    <li>Network constraints and redispatch costs inside Germany are ignored. Including network bottlenecks would raise costs.</li>

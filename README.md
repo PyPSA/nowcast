@@ -32,13 +32,7 @@ There are some strong assumptions and limitations:
 - Biomass is not modelled
 
 
-Future plans:
-
-- Extend to other countries with interconnectors
-- Include newly-electrified loads (electric vehicles, heat pumps, industry electrification, P2X)
-- Include more sophisticated demand-side management (currently a bit of elasticity is allowed)
-- Include other storage technologies (iron-air batteries, methanol, ammonia, etc.)
-- Show bidding curves
+Future plans: see the [issues](https://github.com/PyPSA/nowcast/issues).
 
 ## Live website
 
