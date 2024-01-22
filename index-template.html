@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Nowcast</title>
+    <title>model.energy/future</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css"/>
@@ -12,7 +12,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
       <div class="container">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">model.energy</a>
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">model.energy/future</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
@@ -39,7 +39,7 @@
     </nav>
     <header class="bg-primary text-white">
       <div class="container text-center">
-	  <h1>Nowcast: Tomorrow's power system with today's weather</h1>
+	  <h1>model.energy/future: Future power systems with today's weather</h1>
       </div>
     </header>
     <div class="container-fluid">
@@ -53,14 +53,15 @@
 	  <section id="intro">
 	  <h2>Introduction</h2>
 
-	  <p>This website simulates how a renewable power system of tomorrow
-	    would behave with today's demand and weather.
-	  Today's wind and solar generation is scaled up to
-            projected capacities for tomorrow.</p>
+	  <p>This website simulates how a future renewable power system
+	    would behave with today's demand and weather. Here is the actual wind and solar generation from the past 10 days in Germany:</p>
+	  <p><img class="wide" src="{{results_dir}}/today/{{days_fn[:-11]}}-today.png" /></p>
+	  <p>In the scenarios below the wind and solar generation is scaled up to
+            projected capacities for a future renewable system.</p>
           <p>The feed-in of wind, solar, existing hydroelectricity, batteries and
 hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hours ahead.</b> The long-term hydrogen
 	    storage is dispatched assuming a constant hydrogen value (e.g. 80 &euro;/MWh).</p>
-	  <p><b>Warning:</b> This website is a thought-experiment for educational purposes, not a prediction. Please see <a href="#warnings">all other warnings</a>.</p>
+	  <p><b>Warning:</b> This website is a thought-experiment for educational purposes, not a forecast. Please see <a href="#warnings">all other warnings</a>.</p>
 	  <p>Currently the website only works for Germany as an island system with today's demand. Extensions will follow soon!</p>
 	    </section>
             <section id="explore">
@@ -73,10 +74,6 @@ hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hour
 	      <a href="html/{{scenario}}.html"><img class="wide" src="{{results_dir}}/{{scenario}}/{{days_fn}}" /></a>
 	    </li>
  	    {% endfor %}
-	    <li>
-	      Today's demand, wind, solar and hydroelectricity for comparison
-	      <img class="wide" src="{{results_dir}}/today/{{days_fn[:-11]}}-today.png" /></a>
-	    </li>
 	  </ul>
 	    </section>
 	    <section id="technical">

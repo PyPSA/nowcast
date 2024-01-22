@@ -1,12 +1,12 @@
 
-# Nowcast: Tomorrow's power system with today's weather
+# model.energy/future: Future power systems with today's weather
 
-Uses today's weather to show how the dispatch of tomorrow's power
-system works.
+Uses today's weather to show how the dispatch of a future renewable
+power system would work.
 
-<https://model.energy/nowcast/>
+<https://model.energy/future/>
 
-At the moment only works for Germany.
+At the moment it only works for Germany.
 
 Takes daily data for wind, solar, hydro and load.
 
@@ -22,7 +22,6 @@ Outputs include:
 - Dispatch
 - States of charge for battery and hydrogen storage
 - Prices
-- Bidding curves
 
 There are some strong assumptions and limitations:
 
@@ -39,10 +38,11 @@ Future plans:
 - Include newly-electrified loads (electric vehicles, heat pumps, industry electrification, P2X)
 - Include more sophisticated demand-side management (currently a bit of elasticity is allowed)
 - Include other storage technologies (iron-air batteries, methanol, ammonia, etc.)
+- Show bidding curves
 
 ## Live website
 
-<https://model.energy/nowcast/>
+<https://model.energy/future/>
 
 ## Installation
 
