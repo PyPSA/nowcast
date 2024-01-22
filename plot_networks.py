@@ -119,6 +119,12 @@ def plot_supplydemand(n, fn):
         ax.set_ylabel("power [GW]")
         ax.set_xlabel("")
         ax.set_title(title[i])
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(reversed(handles),
+                  reversed(labels),
+                  loc="upper left",
+                  fontsize=8)
+
 
     graphic_fn = f"{results_dir}/{fn[:-3]}-supplydemand"
 
@@ -167,10 +173,18 @@ def plot_supply(n, fn):
     negative = negative.where(negative >= 0, 0)
 
     positive.plot.area(stacked=True,linewidth=0,color=color,ax=ax)
+
+    negative["load"].plot(linewidth=2, color="k")
+
     ax.set_ylabel("power [GW]")
+    ax.set_ylim([0,120])
     ax.set_xlabel("")
     ax.set_title("")
-    ax.get_legend().remove()
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(reversed(handles),
+              reversed(labels),
+              loc="upper left",
+              fontsize=7)
 
     graphic_fn = f"{results_dir}/{fn[:-3]}-supply"
 

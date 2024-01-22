@@ -59,7 +59,9 @@ def plot(config):
 
     supply.columns = supply.columns.str[3:]
 
-    supply["conventional"] = supply["load"] - supply[config["vre_techs"]].sum(axis=1)
+    supply["other"] = supply["load"] - supply[config["vre_techs"]].sum(axis=1)
+
+    load = supply["load"]
 
     supply.drop(["load"],axis=1,inplace=True)
 
@@ -67,10 +69,17 @@ def plot(config):
 
     supply.plot.area(stacked=True,linewidth=0,color=color,ax=ax)
 
+    load.plot(linewidth=2, color="k")
+
     ax.set_ylabel("power [GW]")
+    ax.set_ylim([0,120])
     ax.set_xlabel("")
     ax.set_title("")
-    ax.get_legend().remove()
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(reversed(handles),
+              reversed(labels),
+              loc="upper left",
+              fontsize=7)
 
     graphic_fn = f"{config['results_dir']}/today/{ct}-days-{date_strings[0]}-{date_strings[-1]}-today"
 
