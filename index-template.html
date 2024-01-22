@@ -25,6 +25,9 @@
               <a class="nav-link js-scroll-trigger" href="#explore">Explore scenarios</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#learn">What we can learn</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#warnings">Warnings</a>
             </li>
             <li class="nav-item">
@@ -77,6 +80,21 @@ hydrogen storage is optimised to meet demand.  <b>The model can only see 24 hour
 	      <a href="html/{{scenario}}.html"><img class="wide" src="{{results_dir}}/{{scenario}}/{{days_fn}}" /></a>
 	    </li>
  	    {% endfor %}
+	  </ul>
+	    </section>
+	    <section id="learn">
+	  <h2>What can we learn?</h2>
+	  <p>Despite the <a href="#warnings">many limitations</a> of these simulations, here are a few things we can learn (not an exhaustive list - also note that the model results depend strongly on input assumptions):</p>
+	  <ul>
+	    <li>Systems dominated by wind and solar can meet demand in all hours if there is sufficient short- and long-term storage.</li>
+	    <li>Wind is very helpful in high latitudes to get through the winter periods when the sun shines less.
+	    </li>
+	    <li>There are multi-day periods with low wind and solar output. To bridge these, batteries, pumped hydroelectricity and short-term demand-side management are too expensive. Longer-term storage (in this example: hydrogen) can help despite the high losses, since it is used infrequently.</li>
+	    <li>Foresight of 24 hours is sufficient to dispatch the system. Long-term storage can be dispatched using heuristics for the value of hydrogen. This is similar to how water values are used to dispatch hydroelectricity-dominated systems today.</li>
+	    <li>Prices are often set by the value of hydrogen, both when hydrogen turbines are price-setting as supply and when hydrogen electrolysers are price-setting as demand.</li>
+	    <li>Prices drop to zero in rare situations when wind and solar supply exceeds all flexible demand.</li>
+	    <li>Market prices are more volatile than prices today on a day-to-day basis, but also don't behave radically differently. Prices in this systems do not depend on world markets for fossil fuels.</li>
+	    <li>While the whole system can recover most of its costs from the market prices, it is hard for the peaking hydrogen turbines to recover their costs without some load shedding or a generator of last resort (e.g. based on imported fuel). This is the same situation as in conventional power systems.</li>
 	  </ul>
 	    </section>
 	    <section id="technical">
