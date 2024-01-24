@@ -107,13 +107,13 @@
             </tr>
  	    {% endfor %}
           </table>
-	  <p>Constant hydrogen value: {{config['hydrogen_value']}} &euro;/MWh;
+	  <p>Constant hydrogen value: {{config['hydrogen_value']}} &euro;/MWh<sub>LHV</sub>;
 	  Value of lost load: {{config['voll']}} &euro;/MWh.
-	  All costs and prices are in 2020 euros.</p>
+	  All costs and prices are in 2020 euros. Fuel energy refers to the lower heating value (LHV).</p>
 	  </section>
 	  <section id="statistics">
 	  <h2>Aggregated yearly statistics</h2>
-	  <p>All costs and prices are in 2020 euros. Annuities are calculated with <a href="../costs.csv">2030 cost assumptions</a> and a weighted average cost of capital (WACC) of 7%.</p>
+	  <p>All costs and prices are in 2020 euros. Fuel energy refers to the lower heating value (LHV). Annuities are calculated with <a href="../costs.csv">2030 cost assumptions</a> and a weighted average cost of capital (WACC) of 7%.</p>
 	  <table id="statistics_table">
             <tr>
               <th>Statistic</th>
