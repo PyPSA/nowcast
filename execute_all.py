@@ -22,6 +22,9 @@ scripts_generic = [
     "correct_data_smard.py",
     "plot_today.py",
     "generate_costs.py",
+]
+
+scripts_post = [
     "generate_index.py"
 ]
 
@@ -53,3 +56,8 @@ for scenario_fn in scenario_fns:
         command = f"{sys.executable} {script} {scenario_fn}"
         print(f"executing {command}")
         os.system(command)
+
+for script in scripts_post:
+    command = f"{sys.executable} {script}"
+    print(f"executing {command}")
+    os.system(command)
