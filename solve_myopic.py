@@ -199,7 +199,15 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
     return n
 
 def solve_network(n, config, solver_name):
+
+    ct = config["countries"][0]
+
     n.optimize.create_model()
+
+    n.model.objective += -(config["battery_dayahead_discount_factor"]*
+                           config["hydrogen_value"]/
+                           config["hydrogen_turbine_efficiency"]*
+                           n.model["Store-e"].loc[n.snapshots[-1],f"{ct}-battery_energy"])
 
     status, termination_condition = n.optimize.solve_model(solver_name=solver_name,
                                                            solver_options=config["solver_options"][solver_name],
@@ -248,7 +256,10 @@ def solve_all(config):
             soc = { f"{ct}-{key}" : value for key,value in config["soc_start"][ct].items() }
 
         if "n" in locals():
-            soc = n.stores_t.e[-extended_hours-1:-extended_hours].squeeze().to_dict()
+            if extended_hours > 0:
+                soc = n.stores_t.e[-extended_hours-1:-extended_hours].squeeze().to_dict()
+            else:
+                soc = n.stores_t.e[-1:].squeeze().to_dict()
 
         print("using previous soc:")
         print(soc)

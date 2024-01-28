@@ -45,5 +45,9 @@ voll: 1000.
 # constant value of H2 in EUR/MWh
 hydrogen_value: 80.
 
+# battery SOC at end of day will be valued by this multiplied with hydrogen turbine output value
+# it's less than one so that H2 turbine from current day is displaced rather than tomorrow
+battery_dayahead_discount_factor: 0.9
+
 # extend last hour so no end-of-horizon effects
-extended_hours: 6
+extended_hours: 0

@@ -80,7 +80,7 @@ networks (for plotting later).
 ## Other websites that served as an inspiration
 
 - [David Osmond simulations for Australia](https://reneweconomy.com.au/a-near-100-per-cent-renewables-grid-is-well-within-reach-and-with-little-storage/)
-- [Agora future-o-meter for Germany](https://www.agora-energiewende.de/service/agorameter)
+- [Agora Future-Agorameter for Germany](https://www.agora-energiewende.de/service/agorameter)
 - [energy-charts REMod scenarios](https://www.energy-charts.info/charts/remod_installed_power/chart.htm?l=en&c=DE) (not live)
 
 

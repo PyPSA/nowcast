@@ -69,6 +69,10 @@ def get_supply(n, buses):
 
 
 def test_truncate(fn):
+
+    if config["extended_hours"] == 0:
+        return False
+
     if "-day-" in fn:
         return True
     else:

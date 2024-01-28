@@ -36,7 +36,8 @@ def concatenate_week(date_strings, week_fn, config):
         ni = safe_pypsa_import(fn)
 
         #truncate overlap
-        ni.set_snapshots(ni.snapshots[:-extended_hours])
+        if extended_hours > 0:
+            ni.set_snapshots(ni.snapshots[:-extended_hours])
 
         if i == 0:
             n = ni
