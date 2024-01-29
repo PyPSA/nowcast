@@ -1,0 +1,16 @@
+name: pypsa-nowcast
+channels:
+- conda-forge
+- gurobi
+dependencies:
+- python>=3.8
+
+- pre-commit
+- black
+
+  # Dependencies of the workflow itself
+- yaml
+- gurobi
+- matplotlib<3.6
+- pypsa>=0.25.1
+- highs

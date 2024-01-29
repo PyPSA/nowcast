@@ -5,6 +5,7 @@
 !*.txt
 !config.yaml
 !scenario-default.yaml
+!environment.yaml
 !index-template.html
 !template.html
 !*.css

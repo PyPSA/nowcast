@@ -40,7 +40,15 @@ Future plans: see the [issues](https://github.com/PyPSA/nowcast/issues).
 
 ## Installation
 
-You will need PyPSA and pandas.
+You will need PyPSA. To install using
+[conda](https://docs.conda.io/en/latest/),
+[mamba](https://mamba.readthedocs.io/en/latest/) or micromamba, you
+can create an environment with the provided `environment.yaml`:
+
+
+    micromamba env create -f environment.yaml
+    micromamba activate pypsa-nowcast
+
 
 The solver defaults to gurobi and cbc, but other solvers can be used (see the
 settings in the `config.yaml`).
