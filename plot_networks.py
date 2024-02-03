@@ -266,19 +266,25 @@ def plot_state_of_charge(n, fn):
 
     to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
 
-    factor = {"hydrogen_energy" : 1e6,
-              "battery_energy" : 1e3}
-    unit = {"hydrogen_energy" : "TWh",
-            "battery_energy" : "GWh"}
+    carriers = {"long" : ["hydrogen_energy"],
+                "short" : ["battery_energy", "pumped_hydro_energy"]}
 
-    for i,col in enumerate(["hydrogen_energy","battery_energy"]):
+    factor = {"long" : 1e6,
+              "short" : 1e3}
+
+    unit = {"long" : "TWh",
+            "short" : "GWh"}
+
+    for i,col in enumerate(["long","short"]):
         ax = axes[i]
-        (to_plot[col]/factor[col]).plot(ax=ax,color=color)
+        (to_plot[carriers[col]]/factor[col]).plot(ax=ax,color=color)
 
         ax.set_ylabel(f"energy [{unit[col]}]")
         ax.set_xlabel("")
-        ax.set_ylim([0.,1.05*to_plot[col].max()/factor[col]])
-        ax.set_title(f"{col[:-7]} storage state of charge")
+        ax.set_ylim([0.,1.05*to_plot[carriers[col]].max().max()/factor[col]])
+        ax.set_title(f"{col}-term storage state of charge")
+        ax.legend(loc="upper left",
+                  fontsize=8)
 
     graphic_fn = f"{results_dir}/{fn[:-3]}-state_of_charge"
 
