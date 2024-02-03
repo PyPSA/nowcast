@@ -137,3 +137,9 @@ color:
   pumped_hydro_energy: '#DAF7A6'
   conventional: '#834333'
   other: '#834333'
+
+
+# short-term storage (e.g. battery or pumped hydro) SOC at end of day will be valued
+# by this multiplied with hydrogen turbine output value
+# it's less than one so that H2 turbine from current day is displaced rather than tomorrow
+dayahead_discount_factor: 0.9

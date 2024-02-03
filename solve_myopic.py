@@ -204,10 +204,11 @@ def solve_network(n, config, solver_name):
 
     n.optimize.create_model()
 
-    n.model.objective += -(config["battery_dayahead_discount_factor"]*
+    n.model.objective += -(config["dayahead_discount_factor"]*
                            config["hydrogen_value"]/
                            config["hydrogen_turbine_efficiency"]*
-                           n.model["Store-e"].loc[n.snapshots[-1],f"{ct}-battery_energy"])
+                           (n.model["Store-e"].loc[n.snapshots[-1],f"{ct}-battery_energy"]
+                            + n.model["Store-e"].loc[n.snapshots[-1],f"{ct}-pumped_hydro_energy"]))
 
     status, termination_condition = n.optimize.solve_model(solver_name=solver_name,
                                                            solver_options=config["solver_options"][solver_name],
