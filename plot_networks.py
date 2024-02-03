@@ -16,7 +16,7 @@
 
 import pypsa, yaml, pandas as pd, os, pytz, datetime, sys, numpy as np
 
-from helpers import safe_pypsa_import
+from helpers import safe_pypsa_import, get_date_index, get_last_days
 
 import matplotlib.pyplot as plt
 
@@ -79,18 +79,22 @@ def test_truncate(fn):
         return False
 
 
-def plot_supplydemand(n, fn):
+def plot_supplydemand(n, fn, snapshots):
 
     fig, axes = plt.subplots(2)
     fig.set_size_inches((10, 8))
 
     truncate = test_truncate(fn)
 
+    ct = config["countries"][0]
+
     tz = config["time_zone"][ct]
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     color = config["color"]
 
-    supply = get_supply(n,[f"{ct}-electricity"])/1e3
+    supply = get_supply(n,[f"{ct}-electricity"]).loc[snapshots]/1e3
 
     if supply.sum(axis=1).abs().max() > 1e-3:
         print("Demand-supply is violated!")
@@ -112,7 +116,7 @@ def plot_supplydemand(n, fn):
     negative = -supply[negative_columns]
     negative = negative.where(negative >= 0, 0)
 
-    if "-full.nc" in fn:
+    if "-full" in fn:
         positive = positive.resample("W").mean()
         negative = negative.resample("W").mean()
 
@@ -130,7 +134,7 @@ def plot_supplydemand(n, fn):
                   fontsize=8)
 
 
-    graphic_fn = f"{results_dir}/{fn[:-3]}-supplydemand"
+    graphic_fn = f"{results_dir}/{fn}-supplydemand"
 
     supply.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
@@ -143,18 +147,22 @@ def plot_supplydemand(n, fn):
     plt.close(fig)
 
 
-def plot_supply(n, fn):
+def plot_supply(n, fn, snapshots):
 
     fig, ax = plt.subplots()
     fig.set_size_inches((10, 2))
 
     truncate = test_truncate(fn)
 
+    ct = config["countries"][0]
+
     tz = config["time_zone"][ct]
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     color = config["color"]
 
-    supply = get_supply(n,[f"{ct}-electricity"])/1e3
+    supply = get_supply(n,[f"{ct}-electricity"]).loc[snapshots]/1e3
 
     if supply.sum(axis=1).abs().max() > 1e-3:
         print("Demand-supply is violated!")
@@ -190,7 +198,7 @@ def plot_supply(n, fn):
               loc="upper left",
               fontsize=7)
 
-    graphic_fn = f"{results_dir}/{fn[:-3]}-supply"
+    graphic_fn = f"{results_dir}/{fn}-supply"
 
     supply.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
@@ -202,7 +210,7 @@ def plot_supply(n, fn):
                 bbox_inches='tight')
     plt.close(fig)
 
-def plot_shares(n, fn):
+def plot_shares(n, fn, snapshots):
 
     fig, ax = plt.subplots()
     fig.set_size_inches((10, 3))
@@ -211,9 +219,11 @@ def plot_shares(n, fn):
 
     ct = "DE"
 
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
+
     color = config["color"]
 
-    supply = get_supply(n,[f"{ct}-electricity"])/1e3
+    supply = get_supply(n,[f"{ct}-electricity"]).loc[snapshots]/1e3
 
 
     s = supply.drop("load",axis=1).sum().sort_values(ascending=False)/(-supply["load"].sum())*100
@@ -233,7 +243,7 @@ def plot_shares(n, fn):
     # Rotating X-axis labels
     plt.xticks(rotation = 15)
 
-    graphic_fn = f"{results_dir}/{fn[:-3]}-shares"
+    graphic_fn = f"{results_dir}/{fn}-shares"
 
     supply.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
@@ -245,23 +255,27 @@ def plot_shares(n, fn):
                 bbox_inches='tight')
     plt.close(fig)
 
-def plot_state_of_charge(n, fn):
+def plot_state_of_charge(n, fn, snapshots):
 
     truncate = test_truncate(fn)
 
     fig, axes = plt.subplots(2)
     fig.set_size_inches((10,7))
 
+    ct = config["countries"][0]
+
     tz = config["time_zone"][ct]
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     color = config["color"]
 
-    to_plot = n.stores_t.e.T.groupby(n.stores.carrier).sum().T
+    to_plot = n.stores_t.e.T.groupby(n.stores.carrier).sum().T.loc[snapshots]
 
     if truncate:
         to_plot = to_plot.iloc[:-config["extended_hours"]]
 
-    if "-full.nc" in fn:
+    if "-full" in fn:
         to_plot = to_plot.resample("W").mean()
 
     to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
@@ -286,7 +300,7 @@ def plot_state_of_charge(n, fn):
         ax.legend(loc="upper left",
                   fontsize=8)
 
-    graphic_fn = f"{results_dir}/{fn[:-3]}-state_of_charge"
+    graphic_fn = f"{results_dir}/{fn}-state_of_charge"
 
     to_plot.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
@@ -298,7 +312,7 @@ def plot_state_of_charge(n, fn):
                 bbox_inches='tight')
     plt.close(fig)
 
-def plot_price(n, fn):
+def plot_price(n, fn, snapshots):
 
     truncate = test_truncate(fn)
 
@@ -306,16 +320,20 @@ def plot_price(n, fn):
 
     fig.set_size_inches((10,4))
 
+    ct = config["countries"][0]
+
     tz = config["time_zone"][ct]
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     color = config["color"]
 
-    to_plot = n.buses_t.marginal_price["DE-electricity"].copy()
+    to_plot = n.buses_t.marginal_price["DE-electricity"].loc[snapshots].copy()
 
     if truncate:
         to_plot = to_plot.iloc[:-config["extended_hours"]]
 
-    if "-full.nc" in fn:
+    if "-full" in fn:
         to_plot = to_plot.resample("W").mean()
 
     to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
@@ -327,7 +345,7 @@ def plot_price(n, fn):
     ax.set_ylim([-0.5,1.05*to_plot.max()])
     ax.set_title(f"electricity price")
 
-    graphic_fn = f"{results_dir}/{fn[:-3]}-price"
+    graphic_fn = f"{results_dir}/{fn}-price"
 
     to_plot.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
@@ -342,13 +360,15 @@ def plot_price(n, fn):
 
 
 
-def plot_price_duration(n, fn):
+def plot_price_duration(n, fn, snapshots):
 
     fig, ax = plt.subplots()
 
     fig.set_size_inches((10,4))
 
-    to_plot = n.buses_t.marginal_price["DE-electricity"].copy()
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
+
+    to_plot = n.buses_t.marginal_price["DE-electricity"].loc[snapshots].copy()
 
     s = to_plot.sort_values(ascending=False)
 
@@ -362,7 +382,7 @@ def plot_price_duration(n, fn):
     ax.set_xlim([0,100])
     ax.set_title("electricity price duration curve")
 
-    graphic_fn = f"{results_dir}/{fn[:-3]}-price_duration"
+    graphic_fn = f"{results_dir}/{fn}-price_duration"
 
     s.to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.pdf",
@@ -381,6 +401,8 @@ def generate_statistics(n, fn, config):
     nyears = n.snapshot_weightings["generators"].sum()/8766
 
     ct = config["countries"][0]
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     s = pd.Series()
 
@@ -468,37 +490,59 @@ def generate_statistics(n, fn, config):
 
     print(s)
 
-    s.to_csv(f"{results_dir}/{fn[:-3]}-statistics.csv")
+    s.to_csv(f"{results_dir}/{fn}-statistics.csv")
 
-def plot_network(n, fn):
 
-    plot_supplydemand(n, fn)
-    plot_shares(n, fn)
-    plot_state_of_charge(n, fn)
-    plot_price(n, fn)
+def plot_network(n, config, fn, date_range):
+
+    ct = config["countries"][0]
+
+    tz = config["time_zone"][ct]
+    snapshots = n.snapshots.tz_localize("UTC").tz_convert(tz)
+    snapshots = snapshots[snapshots.slice_indexer(str(date_range[0].date()),
+                                                  str(date_range[-1].date()))].tz_convert(None)
+
+    plot_supplydemand(n, fn, snapshots)
+    plot_shares(n, fn, snapshots)
+    plot_state_of_charge(n, fn, snapshots)
+    plot_price(n, fn, snapshots)
 
 
     if "-days-" in fn:
-        plot_supply(n, fn)
+        plot_supply(n, fn, snapshots)
 
-    if "-full.nc" in fn:
-        plot_price_duration(n, fn)
+    if "-full" in fn:
+        plot_price_duration(n, fn, snapshots)
         generate_statistics(n, fn, config)
 
-def plot_all_networks(results_dir):
+def plot_all_graphs(config):
 
-    for fn in os.listdir(results_dir):
-        if fn[-3:] == ".nc":
+    ct = config["countries"][0]
 
-            if "-day-" in fn:
-                continue
-            pdf_fn = f"{results_dir}/{fn[:-3]}-supplydemand.pdf"
-            if os.path.isfile(pdf_fn) and (os.path.getmtime(pdf_fn) > os.path.getmtime(os.path.join(results_dir,fn))):
-                continue
-            else:
-                print(f"calculating new plots for {fn}")
-                n = safe_pypsa_import(f"{results_dir}/{fn}")
-                plot_network(n, fn)
+    date_index = get_date_index(config)
+
+    results_dir = f"{config['results_dir']}/{config['scenario']}"
+
+    n = pypsa.Network(f"{results_dir}/{ct}.nc")
+
+    jobs = [[f"{ct}-full", date_index]]
+
+    last_days = get_last_days(config)
+
+    jobs.append([f"{ct}-days-{str(last_days[0].date())}-{str(last_days[-1].date())}",
+                 last_days])
+
+    isocalendar = date_index.isocalendar()
+    isocalendar["week_string"] = isocalendar.year.astype(str) + "-" + isocalendar.week.astype(str)
+    weeks = isocalendar["week_string"].unique()[:-config["weeks_to_plot"]-1:-1]
+
+    for week in weeks:
+        jobs.append([f"{ct}-week-{week}",
+                     date_index[isocalendar.week_string == week]])
+
+    for fn, date_range in jobs:
+        print(f"Plotting {fn}: {date_range}")
+        plot_network(n, config, fn, date_range)
 
 if __name__ == "__main__":
 
@@ -512,8 +556,4 @@ if __name__ == "__main__":
 
     config["scenario"] = scenario_fn[scenario_fn.find("-")+1:-5]
 
-    ct = config["countries"][0]
-
-    results_dir = f"{config['results_dir']}/{config['scenario']}"
-
-    plot_all_networks(results_dir)
+    plot_all_graphs(config)

@@ -18,7 +18,7 @@ import pypsa, yaml, pandas as pd, os, datetime, sys
 
 from shutil import copy
 
-from helpers import get_existing_dates, get_date_index
+from helpers import get_date_index
 
 def extend_df(df,hours):
     """extend an hourly df by hours, filling forward"""
@@ -47,11 +47,14 @@ def derive_pu_availability(current_series, current_capacities):
     return pu
 
 
-def prepare_network(per_unit, future_capacities, load, soc, config):
+def prepare_base_network(config):
+
     n = pypsa.Network()
-    n.set_snapshots(per_unit.index)
 
     for ct in config["countries"]:
+
+        future_capacities = { f"{ct}-{key}" : value for key,value in config["future_capacities"][ct].items()}
+
         n.add("Bus",
               f"{ct}-electricity",
               carrier="electricity")
@@ -59,7 +62,6 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
         n.add("Load",
               f"{ct}-load",
               bus=f"{ct}-electricity",
-              p_set=load[f"{ct}-load"],
               carrier="load")
 
         n.add("Generator",
@@ -98,7 +100,6 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
             n.add("Generator",
                   name,
                   bus=f"{ct}-electricity",
-                  p_max_pu=per_unit[name],
                   p_nom=future_capacities[name]*1e3,
                   marginal_cost=config[f"mc-{vre_tech}"],
                   carrier=vre_tech)
@@ -113,8 +114,7 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
               name,
               bus = f"{ct}-pumped_hydro",
               carrier="pumped_hydro_energy",
-              e_nom=future_capacities[name]*1e3,
-              e_initial=soc[name])
+              e_nom=future_capacities[name]*1e3)
 
         n.add("Link",
               f"{ct}-pumped_hydro_charger",
@@ -142,8 +142,7 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
                     name,
                     bus = f"{ct}-battery",
                     carrier="battery_energy",
-                    e_nom=future_capacities[name]*1e3,
-                    e_initial=soc[name])
+                    e_nom=future_capacities[name]*1e3)
 
         n.add("Link",
                     f"{ct}-battery_charger",
@@ -171,8 +170,7 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
                     bus=f"{ct}-hydrogen",
                     carrier="hydrogen_energy",
                     e_nom=future_capacities[name]*1e3,
-                    marginal_cost=config["hydrogen_value"],
-                    e_initial=soc[name])
+                    marginal_cost=config["hydrogen_value"])
 
         name=f"{ct}-hydrogen_turbine"
         n.add("Link",
@@ -198,11 +196,40 @@ def prepare_network(per_unit, future_capacities, load, soc, config):
     n.consistency_check()
     return n
 
-def solve_network(n, config, solver_name):
+
+
+def attach_time_series(n, per_unit, load):
+
+    if n.snapshots[0] == "now":
+        n.generators_t.p_max_pu = per_unit
+        n.loads_t.p_set = load
+        n.set_snapshots(per_unit.index)
+    else:
+        #first clip any excess
+        snapshots = pd.date_range(n.snapshots[0],
+                             per_unit.index[0] - datetime.timedelta(hours=1),
+                             freq="h")
+        n.set_snapshots(snapshots)
+        n.generators_t.p_max_pu = pd.concat((n.generators_t.p_max_pu,
+                                             per_unit))
+        n.loads_t.p_set = pd.concat((n.loads_t.p_set,
+                                     load))
+        snapshots = pd.date_range(n.snapshots[0],
+                             per_unit.index[-1],
+                             freq="h")
+        n.set_snapshots(snapshots)
+
+
+def apply_soc(n, soc):
+    for store,value in soc.items():
+        n.stores.at[store,"e_initial"] = value
+
+
+def solve_network(n, snapshots, config, solver_name):
 
     ct = config["countries"][0]
 
-    n.optimize.create_model()
+    n.optimize.create_model(snapshots)
 
     n.model.objective += -(config["dayahead_discount_factor"]*
                            config["hydrogen_value"]/
@@ -219,51 +246,42 @@ def solve_all(config):
     solver_name = determine_solver_name(config)
     print(f"using solver {solver_name}")
 
-    results_dir = f"{config['results_dir']}/{config['scenario']}"
-
     ct = config["countries"][0]
+
+    fn = f"{config['results_dir']}/{config['scenario']}/{ct}.nc"
+
+    if not os.path.isfile(fn):
+        print(f"{fn} doesn't exist yet, building from scratch")
+        n = prepare_base_network(config)
+    else:
+        n = pypsa.Network(fn)
 
     extended_hours = config["extended_hours"]
 
-    already = get_existing_dates(results_dir,
-                                 ct + r"-day-(\d{4}-\d{2}-\d{2}).nc")
-
     date_index = get_date_index(config)
 
-    dates_to_process = date_index.difference(already)
-
-    print(f"dates_to_process: {dates_to_process}")
-
     historical_capacities = interpolate_historical_capacities(config, ct, date_index)
+
+    if config["force_restart_date"] != "none":
+        dates_to_process = pd.date_range(start=config["force_restart_date"],
+                                         end=date_index[-1])
+    elif n.snapshots[0] == "now":
+        dates_to_process = date_index
+    else:
+        tz = config["time_zone"][ct]
+        dates_already = pd.Index(n.snapshots.tz_localize("UTC").tz_convert(tz).date).unique()
+        dates_to_process = pd.date_range(start=dates_already[-1] + datetime.timedelta(days=1),
+                                         end=date_index[-1])
+
+    print(f"dates to process: {dates_to_process}")
+    if dates_to_process.empty:
+        return
 
     for date in dates_to_process:
 
         date_string = str(date.date())
 
         print(f"Solving date {date_string}")
-
-        fn = f"{results_dir}/DE-day-{date_string}.nc"
-
-        day_before = date - datetime.timedelta(days=1)
-        day_before_fn = f"{results_dir}/DE-day-{str(day_before.date())}.nc"
-
-        if "n" in locals() and day_before.tz_localize("UTC") in n.snapshots:
-            print(f"using network in scope for {day_before.date()} SOC")
-        elif os.path.isfile(day_before_fn):
-            print(f"reading in SOC from {day_before_fn}")
-            n = pypsa.Network(day_before_fn)
-        else:
-            print(f"no previously-calculated SOC, using soc_start")
-            soc = { f"{ct}-{key}" : value for key,value in config["soc_start"][ct].items() }
-
-        if "n" in locals():
-            if extended_hours > 0:
-                soc = n.stores_t.e[-extended_hours-1:-extended_hours].squeeze().to_dict()
-            else:
-                soc = n.stores_t.e[-1:].squeeze().to_dict()
-
-        print("using previous soc:")
-        print(soc)
 
         weather_fn = f"{config['weather_dir']}/{ct}-day-{date_string}-corrected.csv"
         if not os.path.isfile(weather_fn):
@@ -272,7 +290,7 @@ def solve_all(config):
 
         df = pd.read_csv(weather_fn,
                          parse_dates=True,
-                         index_col=0)
+                         index_col=0).tz_convert(tz=None)
 
         extended_df = extend_df(df,
                                 extended_hours)
@@ -284,21 +302,28 @@ def solve_all(config):
         per_unit = derive_pu_availability(extended_df,
                                           current_capacities)
 
-        future_capacities = { f"{ct}-{key}" : value for key,value in config["future_capacities"][ct].items() }
+        attach_time_series(n,
+                   per_unit,
+                   extended_df[[f"{ct}-load"]])
 
-        n = prepare_network(per_unit,
-                            future_capacities,
-                            extended_df[[f"{ct}-load"]],
-                            soc,
-                            config)
+        if date == date_index[0]:
+            soc = { f"{ct}-{key}" : float(value) for key,value in config["soc_start"][ct].items() }
+        else:
+            previous_hour = per_unit.index[0] - datetime.timedelta(hours=1)
+            soc = n.stores_t.e.loc[previous_hour].to_dict()
 
+        print("using previous soc:")
+        print(soc)
+
+        apply_soc(n,soc)
 
         solve_network(n,
+                      per_unit.index,
                       config,
                       solver_name)
 
-        n.export_to_netcdf(fn,
-                           float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
+    n.export_to_netcdf(fn,
+                       float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
 
 
 def gurobi_present():
@@ -322,6 +347,11 @@ def determine_solver_name(config):
 
 
 def copy_config(config,scenario_fn):
+
+    results_dir = f"{config['results_dir']}"
+
+    if not os.path.isdir(results_dir):
+        os.mkdir(results_dir)
 
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 

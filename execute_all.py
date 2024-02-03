@@ -30,9 +30,6 @@ scripts_post = [
 
 scripts_scenario = [
     "solve_myopic.py",
-    "concatenate_networks.py",
-    "concatenate_days.py",
-    "concatenate_weeks.py",
     "plot_networks.py",
     "generate_html.py",
     ]

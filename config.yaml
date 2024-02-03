@@ -1,5 +1,5 @@
 
-results_dir: myopic
+results_dir: results
 
 weather_dir: weather
 
@@ -7,6 +7,8 @@ html_dir: html
 
 start_date: 2015-01-01
 end_date: yesterday
+
+force_restart_date: none
 
 countries: [DE]
 
