@@ -136,10 +136,8 @@ def plot_supplydemand(n, fn, snapshots):
 
     graphic_fn = f"{results_dir}/{fn}-supplydemand"
 
-    supply.to_csv(f"{graphic_fn}.csv")
-    fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True,
-                bbox_inches='tight')
+    if "-full" in fn:
+        supply.round(3).to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.png",
                 dpi=200,
                 transparent=True,
@@ -200,10 +198,6 @@ def plot_supply(n, fn, snapshots):
 
     graphic_fn = f"{results_dir}/{fn}-supply"
 
-    supply.to_csv(f"{graphic_fn}.csv")
-    fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True,
-                bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
                 dpi=200,
                 transparent=True,
@@ -245,10 +239,6 @@ def plot_shares(n, fn, snapshots):
 
     graphic_fn = f"{results_dir}/{fn}-shares"
 
-    supply.to_csv(f"{graphic_fn}.csv")
-    fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True,
-                bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
                 dpi=200,
                 transparent=True,
@@ -302,10 +292,8 @@ def plot_state_of_charge(n, fn, snapshots):
 
     graphic_fn = f"{results_dir}/{fn}-state_of_charge"
 
-    to_plot.to_csv(f"{graphic_fn}.csv")
-    fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True,
-                bbox_inches='tight')
+    if "-full" in fn:
+        to_plot.round(3).to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.png",
                 dpi=200,
                 transparent=True,
@@ -347,10 +335,8 @@ def plot_price(n, fn, snapshots):
 
     graphic_fn = f"{results_dir}/{fn}-price"
 
-    to_plot.to_csv(f"{graphic_fn}.csv")
-    fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True,
-                bbox_inches='tight')
+    if "-full" in fn:
+        to_plot.round(2).to_csv(f"{graphic_fn}.csv")
     fig.savefig(f"{graphic_fn}.png",
                 dpi=200,
                 transparent=True,
@@ -384,10 +370,6 @@ def plot_price_duration(n, fn, snapshots):
 
     graphic_fn = f"{results_dir}/{fn}-price_duration"
 
-    s.to_csv(f"{graphic_fn}.csv")
-    fig.savefig(f"{graphic_fn}.pdf",
-                transparent=True,
-                bbox_inches='tight')
     fig.savefig(f"{graphic_fn}.png",
                 dpi=200,
                 transparent=True,
