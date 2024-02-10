@@ -74,12 +74,6 @@ e.V.](https://ag-energiebilanzen.de/daten-und-fakten/zusatzinformationen/).
 `solve_myopic.py scenario-default.yaml` optimises each day myopically in sequence, passing
 on the state of charge of all storage units.
 
-`concatenate_networks.py scenario-default.yaml` builds a single PyPSA network out of all day
-networks (for plotting later).
-
-`concatenate_weeks scenario-default.yaml` builds weekly PyPSA networks out of all day
-networks (for plotting later).
-
 `plot_networks.py scenario-default.yaml` generates the graphics.
 
 `generate_html.py scenario-default.yaml` makes a webpage for each scenario.

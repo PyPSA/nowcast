@@ -265,10 +265,10 @@ def plot_state_of_charge(n, fn, snapshots):
     if truncate:
         to_plot = to_plot.iloc[:-config["extended_hours"]]
 
+    to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
+
     if "-full" in fn:
         to_plot = to_plot.resample("W").mean()
-
-    to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
 
     carriers = {"long" : ["hydrogen_energy"],
                 "short" : ["battery_energy", "pumped_hydro_energy"]}
@@ -321,10 +321,10 @@ def plot_price(n, fn, snapshots):
     if truncate:
         to_plot = to_plot.iloc[:-config["extended_hours"]]
 
+    to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
+
     if "-full" in fn:
         to_plot = to_plot.resample("W").mean()
-
-    to_plot.index = to_plot.index.tz_localize("UTC").tz_convert(tz)
 
     to_plot.plot(ax=ax)
 
