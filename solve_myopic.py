@@ -14,7 +14,7 @@
 ## https://github.com/PyPSA/nowcast
 
 
-import pypsa, yaml, pandas as pd, os, datetime, sys
+import pypsa, yaml, pandas as pd, os, datetime, sys, numpy as np
 
 from shutil import copy
 
@@ -230,23 +230,28 @@ def prepare_base_network(config):
                     e_nom=future_capacities[name]*1e3,
                     marginal_cost=config["hydrogen_value"])
 
-        name=f"{ct}-hydrogen_turbine"
-        n.add("Link",
-              name,
-              bus0=f"{ct}-hydrogen",
-              bus1=f"{ct}-electricity",
-              carrier="hydrogen_turbine",
-              p_nom=future_capacities[name]*1e3/config["hydrogen_turbine_efficiency"],
-              efficiency=config["hydrogen_turbine_efficiency"])
 
-        name=f"{ct}-hydrogen_electrolyser"
-        n.add("Link",
-              name,
-              bus0=f"{ct}-electricity",
-              bus1=f"{ct}-hydrogen",
-              carrier="hydrogen_electrolyser",
-              p_nom=future_capacities[name]*1e3,
-              efficiency=config["hydrogen_electrolyser_efficiency"])
+        #add noise on efficiency to lift dispatch degeneracy
+        #this helps stabilise results
+        deviation = config['hydrogen_converter_efficiency_noise']
+        intervals = config['hydrogen_converter_degeneracy']
+        adjustments = np.arange(-deviation,deviation + 1e-5,deviation*2/(intervals-1))
+
+        for i,adjustment in enumerate(adjustments):
+            n.add("Link",
+                  f"{ct}-hydrogen_turbine-{i}",
+                  bus0=f"{ct}-hydrogen",
+                  bus1=f"{ct}-electricity",
+                  carrier="hydrogen_turbine",
+                  p_nom=future_capacities[f"{ct}-hydrogen_turbine"]*1e3/config["hydrogen_turbine_efficiency"]/intervals,
+                  efficiency=config["hydrogen_turbine_efficiency"] + adjustment)
+            n.add("Link",
+                  f"{ct}-hydrogen_electrolyser-{i}",
+                  bus0=f"{ct}-electricity",
+                  bus1=f"{ct}-hydrogen",
+                  carrier="hydrogen_electrolyser",
+                  p_nom=future_capacities[f"{ct}-hydrogen_electrolyser"]*1e3/intervals,
+                  efficiency=config["hydrogen_electrolyser_efficiency"] + adjustment)
 
 
     n.consistency_check()

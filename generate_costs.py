@@ -41,6 +41,7 @@ cost_map = {'onshore': "onwind",
             'battery_energy': "battery storage",
             'hydrogen_electrolyser': "electrolysis",
             'hydrogen_turbine': "CCGT",
+            'hydrogen_ocgt': "OCGT",
             'hydrogen_energy': 'hydrogen storage underground',
             'hydro': 'ror',
             'pumped_hydro': 'PHS'}

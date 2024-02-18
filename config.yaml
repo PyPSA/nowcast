@@ -178,3 +178,7 @@ bev_battery_size: 25
 # [hour of day UTC]
 bev_charge_end_hour: 6
 bev_charge_start_hour: 18
+
+# add noise on converter efficiencies to stabilise results
+hydrogen_converter_efficiency_noise: 0.01
+hydrogen_converter_degeneracy: 5
