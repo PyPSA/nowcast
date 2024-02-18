@@ -140,6 +140,7 @@ color:
   conventional: '#834333'
   other: '#834333'
   bev_demand: '#40E0D0'
+  bev_charger: '#40E0D0'
   heat_pumps: '#90EE90'
 
 # short-term storage (e.g. battery or pumped hydro) SOC at end of day will be valued
@@ -162,5 +163,18 @@ heat_pump_power: 5
 # [MWh_th/a]
 heat_pump_demand_yearly: 20
 
+# [kWh_th]
+heat_storage_per_heat_pump: 10
+
 # [MWh_el/a]
 bev_demand_yearly: 2
+
+# [kW_el]
+bev_charger_power: 11
+
+# available to system for flexible charging [kWh_el]
+bev_battery_size: 25
+
+# [hour of day UTC]
+bev_charge_end_hour: 6
+bev_charge_start_hour: 18

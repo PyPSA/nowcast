@@ -64,30 +64,56 @@ def prepare_base_network(config):
               bus=f"{ct}-electricity",
               carrier="load")
 
-        name = f"{ct}-bev_demand"
-        n.add("Load",
-              name,
-              bus=f"{ct}-electricity",
-              carrier="bev_demand",
-              p_set=future_capacities[f"{ct}-battery_electric_vehicles"]*1e6*config['bev_demand_yearly']/8766)
+        bevs = future_capacities[f"{ct}-battery_electric_vehicles"]
+        if bevs > 0:
+            n.add("Bus",
+                  f"{ct}-bev",
+                  carrier="bev")
 
-        n.add("Bus",
-              f"{ct}-heat",
-              carrier="heat")
+            n.add("Load",
+                  f"{ct}-bev_demand",
+                  bus=f"{ct}-bev",
+                  carrier="bev_demand")
 
-        name = f"{ct}-heat_demand"
-        n.add("Load",
-              name,
-              bus=f"{ct}-heat",
-              carrier="heat_demand")
+            n.add("Link",
+                  f"{ct}-bev_charger",
+                  bus0=f"{ct}-electricity",
+                  bus1=f"{ct}-bev",
+                  p_nom=config['bev_charger_power']*bevs*1e3,
+                  carrier="bev_charger")
 
-        name = f"{ct}-heat_pumps"
-        n.add("Link",
-              name,
-              bus0=f"{ct}-electricity",
-              bus1=f"{ct}-heat",
-              carrier="heat_pumps",
-              p_nom=config['heat_pump_power']*future_capacities[name]*1e3)
+            n.add("Store",
+                  f"{ct}-bev",
+                  bus=f"{ct}-bev",
+                  e_nom_cyclic=True,
+                  e_nom=config['bev_battery_size']*bevs*1e3,
+                  carrier="bev")
+
+        heat_pumps = future_capacities[f"{ct}-heat_pumps"]
+        if heat_pumps > 0:
+            n.add("Bus",
+                  f"{ct}-heat",
+                  carrier="heat")
+
+            n.add("Load",
+                  f"{ct}-heat_demand",
+                  bus=f"{ct}-heat",
+                  carrier="heat_demand")
+
+            n.add("Link",
+                  f"{ct}-heat_pumps",
+                  bus0=f"{ct}-electricity",
+                  bus1=f"{ct}-heat",
+                  carrier="heat_pumps",
+                  p_nom=config['heat_pump_power']*heat_pumps*1e3)
+
+            n.add("Store",
+                  f"{ct}-heat_storage",
+                  bus=f"{ct}-heat",
+                  e_nom_cyclic=True,
+                  e_nom=config['heat_storage_per_heat_pump']*heat_pumps*1e3,
+                  carrier="heat_storage")
+
 
         n.add("Generator",
               f"{ct}-load_shedding",
@@ -223,24 +249,36 @@ def prepare_base_network(config):
               efficiency=config["hydrogen_electrolyser_efficiency"])
 
 
-
-
     n.consistency_check()
     return n
 
 
 
-def attach_time_series(n, per_unit, load, heat_profile, cop, heat_pumps, ct):
+def attach_time_series(n, config, per_unit, load, heat_profile, cop, bev_profile):
 
-    load = pd.concat((load,pd.DataFrame({f"{ct}-heat_demand" : pd.Series(config['heat_pump_demand_yearly']*heat_profile*heat_pumps*1e6, load.index)})),
-                     axis=1)
+    ct = config["countries"][0]
+
+    heat_pumps = config["future_capacities"][ct]["heat_pumps"]
+
+    bevs = config["future_capacities"][ct]["battery_electric_vehicles"]
+
+    if heat_pumps > 0:
+        load = pd.concat((load, pd.DataFrame({f"{ct}-heat_demand" : pd.Series(config['heat_pump_demand_yearly']*heat_profile*heat_pumps*1e6, load.index)})),
+                         axis=1)
+
+    if bevs > 0:
+        load = pd.concat((load, bev_profile[["bev_demand"]].rename(lambda n: f"{ct}-{n}",axis=1)*bevs*1e6*config['bev_demand_yearly']),
+                         axis=1)
 
     efficiency = pd.DataFrame({f"{ct}-heat_pumps" : cop})
+
+    links_p_max_pu = bev_profile[["bev_availability"]].rename({"bev_availability" : f"{ct}-bev_charger"}, axis=1)
 
     if n.snapshots[0] == "now":
         n.generators_t.p_max_pu = per_unit
         n.loads_t.p_set = load
         n.links_t.efficiency = efficiency
+        n.links_t.p_max_pu = links_p_max_pu
         n.set_snapshots(per_unit.index)
     else:
         #first clip any excess
@@ -254,6 +292,8 @@ def attach_time_series(n, per_unit, load, heat_profile, cop, heat_pumps, ct):
                                      load))
         n.links_t.efficiency = pd.concat((n.links_t.efficiency,
                                           efficiency))
+        n.links_t.p_max_pu = pd.concat((n.links_t.p_max_pu,
+                                        links_p_max_pu))
         snapshots = pd.date_range(n.snapshots[0],
                              per_unit.index[-1],
                              freq="h")
@@ -351,18 +391,23 @@ def solve_all(config):
                                    parse_dates=True,
                                    index_col=0).squeeze().reindex(per_unit.index, method="bfill")
 
+        bev_profile = pd.read_csv(os.path.join(config['weather_dir'],
+                                                f'{ct}-bev_profile.csv'),
+                                  parse_dates=True,
+                                  index_col=0).reindex(per_unit.index, method="bfill")
+
         cop = pd.read_csv(os.path.join(config['weather_dir'],
                                        f'{ct}-heat_pump_cop.csv'),
                           parse_dates=True,
                           index_col=0).squeeze().reindex(per_unit.index, method="bfill")
 
         attach_time_series(n,
+                           config,
                            per_unit,
                            extended_df[[f"{ct}-load"]],
                            heat_profile,
                            cop,
-                           config["future_capacities"][ct]["heat_pumps"],
-                           ct=ct)
+                           bev_profile)
 
         if date == date_index[0]:
             soc = { f"{ct}-{key}" : float(value) for key,value in config["soc_start"][ct].items() }
