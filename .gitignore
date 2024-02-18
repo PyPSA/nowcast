@@ -10,3 +10,5 @@
 !template.html
 !*.css
 !*.js
+!heat_load_profile_BDEW.csv
+!DE-bundesländer.csv

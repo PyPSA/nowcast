@@ -139,9 +139,28 @@ color:
   pumped_hydro_energy: '#DAF7A6'
   conventional: '#834333'
   other: '#834333'
-
+  bev_demand: '#40E0D0'
+  heat_pumps: '#90EE90'
 
 # short-term storage (e.g. battery or pumped hydro) SOC at end of day will be valued
 # by this multiplied with hydrogen turbine output value
 # it's less than one so that H2 turbine from current day is displaced rather than tomorrow
 dayahead_discount_factor: 0.9
+
+# daily mean temperature below which there is space heating [C]
+heating_temperature_threshold: 15
+
+# hot water fraction of heating demand
+hot_water_fraction: 0.25
+
+# [C]
+heat_pump_supply_temperature: 45
+
+# [kW_el]
+heat_pump_power: 5
+
+# [MWh_th/a]
+heat_pump_demand_yearly: 20
+
+# [MWh_el/a]
+bev_demand_yearly: 2

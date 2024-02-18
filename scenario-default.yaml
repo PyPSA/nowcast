@@ -27,6 +27,9 @@ future_capacities:
     hydrogen_electrolyser : 65
     hydrogen_turbine : 65
     hydrogen_energy : 100000
+    hydrogen_demand: 0
+    heat_pumps: 0
+    battery_electric_vehicles: 0
 
 battery_power_efficiency_charging: 0.95
 battery_power_efficiency_discharging: 0.95

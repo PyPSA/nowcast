@@ -64,6 +64,31 @@ def prepare_base_network(config):
               bus=f"{ct}-electricity",
               carrier="load")
 
+        name = f"{ct}-bev_demand"
+        n.add("Load",
+              name,
+              bus=f"{ct}-electricity",
+              carrier="bev_demand",
+              p_set=future_capacities[f"{ct}-battery_electric_vehicles"]*1e6*config['bev_demand_yearly']/8766)
+
+        n.add("Bus",
+              f"{ct}-heat",
+              carrier="heat")
+
+        name = f"{ct}-heat_demand"
+        n.add("Load",
+              name,
+              bus=f"{ct}-heat",
+              carrier="heat_demand")
+
+        name = f"{ct}-heat_pumps"
+        n.add("Link",
+              name,
+              bus0=f"{ct}-electricity",
+              bus1=f"{ct}-heat",
+              carrier="heat_pumps",
+              p_nom=config['heat_pump_power']*future_capacities[name]*1e3)
+
         n.add("Generator",
               f"{ct}-load_shedding",
               bus=f"{ct}-electricity",
@@ -164,6 +189,13 @@ def prepare_base_network(config):
               f"{ct}-hydrogen",
               carrier="hydrogen")
 
+        name = f"{ct}-hydrogen_demand"
+        n.add("Load",
+              name,
+              bus=f"{ct}-hydrogen",
+              carrier="hydrogen_demand",
+              p_set=future_capacities[name]*1e3)
+
         name = f"{ct}-hydrogen_energy"
         n.add("Store",
                     name,
@@ -198,11 +230,17 @@ def prepare_base_network(config):
 
 
 
-def attach_time_series(n, per_unit, load):
+def attach_time_series(n, per_unit, load, heat_profile, cop, heat_pumps, ct):
+
+    load = pd.concat((load,pd.DataFrame({f"{ct}-heat_demand" : pd.Series(config['heat_pump_demand_yearly']*heat_profile*heat_pumps*1e6, load.index)})),
+                     axis=1)
+
+    efficiency = pd.DataFrame({f"{ct}-heat_pumps" : cop})
 
     if n.snapshots[0] == "now":
         n.generators_t.p_max_pu = per_unit
         n.loads_t.p_set = load
+        n.links_t.efficiency = efficiency
         n.set_snapshots(per_unit.index)
     else:
         #first clip any excess
@@ -214,6 +252,8 @@ def attach_time_series(n, per_unit, load):
                                              per_unit))
         n.loads_t.p_set = pd.concat((n.loads_t.p_set,
                                      load))
+        n.links_t.efficiency = pd.concat((n.links_t.efficiency,
+                                          efficiency))
         snapshots = pd.date_range(n.snapshots[0],
                              per_unit.index[-1],
                              freq="h")
@@ -240,6 +280,10 @@ def solve_network(n, snapshots, config, solver_name):
     status, termination_condition = n.optimize.solve_model(solver_name=solver_name,
                                                            solver_options=config["solver_options"][solver_name],
                                                            log_fn=config["solver_logfile"])
+
+    if status == "warning" or "infeasible" in termination_condition:
+        print(f"optimisation error, exiting, status: {status}, condition: {termination_condition}")
+        sys.exit()
 
 def solve_all(config):
 
@@ -302,9 +346,23 @@ def solve_all(config):
         per_unit = derive_pu_availability(extended_df,
                                           current_capacities)
 
+        heat_profile = pd.read_csv(os.path.join(config['weather_dir'],
+                                                f'{ct}-heat_profile.csv'),
+                                   parse_dates=True,
+                                   index_col=0).squeeze().reindex(per_unit.index, method="bfill")
+
+        cop = pd.read_csv(os.path.join(config['weather_dir'],
+                                       f'{ct}-heat_pump_cop.csv'),
+                          parse_dates=True,
+                          index_col=0).squeeze().reindex(per_unit.index, method="bfill")
+
         attach_time_series(n,
-                   per_unit,
-                   extended_df[[f"{ct}-load"]])
+                           per_unit,
+                           extended_df[[f"{ct}-load"]],
+                           heat_profile,
+                           cop,
+                           config["future_capacities"][ct]["heat_pumps"],
+                           ct=ct)
 
         if date == date_index[0]:
             soc = { f"{ct}-{key}" : float(value) for key,value in config["soc_start"][ct].items() }
