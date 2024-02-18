@@ -8,14 +8,14 @@ power system would work.
 
 At the moment it only works for Germany.
 
-Takes daily data for wind, solar, hydro and load.
+Takes daily data for wind, solar, hydro, load and heat demand.
 
 Dispatches a future energy system with wind, solar, hydroelectricity,
-batteries and hydrogen storage to meet today's load. Capacities for
+batteries, hydrogen storage and flexible demand to minimise costs. Capacities for
 the future are fixed in advance.
 
 The dispatch is myopic over the next 24 hours. The long-term hydrogen
-storage is dispatched using a constant hydrogen value (e.g. 80 €/MWh).
+storage is dispatched using a constant hydrogen value (e.g. 90 €/MWh).
 
 Outputs include:
 
