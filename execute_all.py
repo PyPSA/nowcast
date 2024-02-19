@@ -22,6 +22,10 @@ scripts_generic = [
     "correct_data_smard.py",
     "plot_today.py",
     "generate_costs.py",
+    "download_temperature.py",
+    "build_cop.py",
+    "build_heat_demand.py",
+    "build_bev_profile.py",
 ]
 
 scripts_post = [
