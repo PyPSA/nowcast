@@ -17,6 +17,8 @@ import pandas as pd, yaml, os
 
 from helpers import get_last_days
 
+from plot_networks import rename
+
 import matplotlib.pyplot as plt
 
 plt.style.use('ggplot')
@@ -55,15 +57,21 @@ def plot(config):
 
     supply = df/1e3
 
-    supply.index = supply.index.tz_convert(tz)
-
     supply.columns = supply.columns.str[3:]
 
-    supply["other"] = supply["load"] - supply[config["vre_techs"]].sum(axis=1)
+    supply.rename(rename,
+                  axis=1,
+                  inplace=True)
 
-    load = supply["load"]
+    print(supply)
 
-    supply.drop(["load"],axis=1,inplace=True)
+    supply.index = supply.index.tz_convert(tz)
+
+    supply["other"] = supply["today's demand"] - supply[map(rename,config["vre_techs"])].sum(axis=1)
+
+    load = supply["today's demand"]
+
+    supply.drop(["today's demand"],axis=1,inplace=True)
 
     supply = supply.where(supply >= 0, 0)
 

@@ -71,7 +71,7 @@
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-state_of_charge.png" />
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-price.png" />
 	  <img class="wide" src="../{{results_dir}}/{{ct}}-full-price_duration.png" />
-	  {% for statistic in ["electricity mean price [&euro;/MWh]","System levelised cost [&euro;/MWh]"] %}
+	  {% for statistic in ["electricity mean price [&euro;/MWh]","System levelised cost for demand excluding storage [&euro;/MWh]"] %}
 	  <p>{{statistic}}: {{ "%.2f"|format(statistics[statistic]) }}</p>
  	  {% endfor %}
 	  <p><a href="#statistics">All aggregated yearly statistics</a></p>
@@ -88,7 +88,7 @@
 	  </section>
 	  <section id="future_capacities">
 	    <h2>Future capacities in {{ct}}</h2>
-	    All units are GW for power or GWh for storage energy.
+	    All units are GW for power, GWh for storage energy or million additional units for heat pumps and battery electric vehicles.
 	  <table id="results_table">
             <tr>
               <th>Technology</th>

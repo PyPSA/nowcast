@@ -120,28 +120,28 @@ days_to_plot: 10
 preferred_scenario_order: [default, lessvre, lowwind, nowind, elastic]
 
 color:
-  battery_charger: '#999999'
-  battery_discharger: '#999999'
-  battery_energy: '#999999'
-  hydrogen_electrolyser: cyan
-  hydrogen_turbine: red
-  hydrogen_energy: magenta
-  load: k
-  load_shedding: k
-  load_decrease: '#ff99ff'
-  load_increase: '#ff99ff'
-  offshore: '#5D83A4'
-  onshore: '#3B6182'
-  pv: '#FFFF00'
-  hydro: green
-  pumped_hydro_charger: '#DAF7A6'
-  pumped_hydro_discharger: '#DAF7A6'
-  pumped_hydro_energy: '#DAF7A6'
+  battery charger: '#999999'
+  battery discharger: '#999999'
+  battery energy: '#999999'
+  hydrogen electrolyser: cyan
+  hydrogen turbine: red
+  hydrogen energy: magenta
+  "today's demand": k
+  load shedding: k
+  load decrease: '#ff99ff'
+  load increase: '#ff99ff'
+  offshore wind: '#5D83A4'
+  onshore wind: '#3B6182'
+  solar PV: '#FFFF00'
+  hydroelectricity: green
+  pumped hydro charger: '#DAF7A6'
+  pumped hydro discharger: '#DAF7A6'
+  pumped hydro energy: '#DAF7A6'
   conventional: '#834333'
   other: '#834333'
-  bev_demand: '#40E0D0'
-  bev_charger: '#40E0D0'
-  heat_pumps: '#90EE90'
+  bev demand: '#40E0D0'
+  bev charger: '#40E0D0'
+  heat pumps: '#90EE90'
 
 # short-term storage (e.g. battery or pumped hydro) SOC at end of day will be valued
 # by this multiplied with hydrogen turbine output value

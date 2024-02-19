@@ -13,7 +13,7 @@ soc_start:
     battery_energy: 5.0e3
     hydrogen_energy: 8.0e7
 
-# in GW or GWh
+# in GW or GWh or million units for HPs and BEVs
 future_capacities:
   DE:
     onshore : 150

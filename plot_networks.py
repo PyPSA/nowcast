@@ -23,6 +23,31 @@ import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
 
+
+def rename(carrier):
+
+    carrier = carrier.replace("_"," ")
+
+    replace = {"load" : "today's demand",
+               "onshore" : "onshore wind",
+               "offshore" : "offshore wind",
+               "pv" : "solar PV",
+               "hydro" : "hydroelectricity",
+               }
+
+
+    for key, value in replace.items():
+        if carrier == key:
+            carrier = value
+
+    return carrier
+
+
+def rename_network(n):
+    for c in n.iterate_components(["Link","Generator","Store","Load"]):
+        c.df["carrier"] = c.df["carrier"].map(rename)
+
+
 def get_supply(n, buses):
 
     supply = pd.DataFrame(index=n.snapshots)
@@ -184,7 +209,7 @@ def plot_supply(n, fn, snapshots):
 
     positive.plot.area(stacked=True,linewidth=0,color=color,ax=ax)
 
-    negative["load"].plot(linewidth=2, color="k")
+    negative["today's demand"].plot(linewidth=2, color="k")
 
     ax.set_ylabel("power [GW]")
     ax.set_ylim([0,120])
@@ -219,15 +244,16 @@ def plot_shares(n, fn, snapshots):
 
     supply = get_supply(n,[f"{ct}-electricity"]).loc[snapshots]/1e3
 
+    total_demand = (supply.sum()[supply.sum() > 0]).sum()
 
-    s = supply.drop("load",axis=1).sum().sort_values(ascending=False)/(-supply["load"].sum())*100
+    s = supply.sum().sort_values(ascending=False)/(total_demand)*100
     s.drop(s.index[s.abs() < config["numerical_threshold"]], inplace=True)
 
     bar = s.plot.bar(color=[color[i] for i in s.index],
                      ax=ax)
-    ax.set_ylabel("share of load [%]")
+    ax.set_ylabel("share of total demand [%]")
     ax.set_xlabel("")
-    ax.set_title("share of load [%]")
+    ax.set_title("share of total demand [%]")
 
     for i, item in enumerate(s.values):
         yoffset = 2 if item > 0 else -6
@@ -270,8 +296,8 @@ def plot_state_of_charge(n, fn, snapshots):
     if "-full" in fn:
         to_plot = to_plot.resample("W").mean()
 
-    carriers = {"long" : ["hydrogen_energy"],
-                "short" : ["battery_energy", "pumped_hydro_energy"]}
+    carriers = {"long" : ["hydrogen energy"],
+                "short" : ["battery energy", "pumped hydro energy"]}
 
     factor = {"long" : 1e6,
               "short" : 1e3}
@@ -408,7 +434,13 @@ def generate_statistics(n, fn, config):
 
     s = pd.concat([s,supply.sum().abs().rename(lambda n: n + " yearly dispatch [TWh/a]")/nyears/1e6])
 
-    vre_techs = config["vre_techs"]
+    s["total demand yearly dispatch [TWh/a]"] = (supply.sum()[supply.sum() > 0]).sum()/nyears/1e6
+
+    electrolyser_efficiency = n.links.efficiency.groupby(n.links.carrier).mean()["hydrogen electrolyser"]
+
+    s["total demand (excluding storage) yearly dispatch [TWh/a]"] = sum([s[f"{item} yearly dispatch [TWh/a]"] for item in ["today's demand","bev charger","heat pumps"] if f"{item} yearly dispatch [TWh/a]" in s]) + config["future_capacities"][ct]["hydrogen_demand"]*8760/1e3/electrolyser_efficiency
+
+    vre_techs = list(map(rename, config["vre_techs"]))
 
     available = n.generators_t.p_max_pu.multiply(n.snapshot_weightings["generators"],axis=0).multiply(n.generators.p_nom_opt,axis=1)
     available = available.T.groupby(n.generators.carrier).sum().T[vre_techs]
@@ -462,7 +494,7 @@ def generate_statistics(n, fn, config):
 
     s["total yearly revenue [M€/a]"] = s[s.index.str.contains(" yearly revenue")].sum()
 
-    s["System levelised cost [€/MWh]"] = s["total yearly fixed costs [M€/a]"]/s["load yearly dispatch [TWh/a]"]
+    s["System levelised cost for demand excluding storage [€/MWh]"] = s["total yearly fixed costs [M€/a]"]/s["total demand (excluding storage) yearly dispatch [TWh/a]"]
 
     print("replacing following nans with zero")
 
@@ -506,6 +538,8 @@ def plot_all_graphs(config):
     results_dir = f"{config['results_dir']}/{config['scenario']}"
 
     n = pypsa.Network(f"{results_dir}/{ct}.nc")
+
+    rename_network(n)
 
     jobs = [[f"{ct}-full", date_index]]
 
