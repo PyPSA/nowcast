@@ -112,6 +112,7 @@ def prepare_base_network(config):
                   bus=f"{ct}-heat",
                   e_nom_cyclic=True,
                   e_nom=config['heat_storage_per_heat_pump']*heat_pumps*1e3,
+                  standing_loss=config['heat_storage_standing_loss'],
                   carrier="heat_storage")
 
 
