@@ -163,6 +163,9 @@ heat_pump_power: 5
 # [MWh_th/a]
 heat_pump_demand_yearly: 20
 
+# [p.u. of nominal/h]
+heat_pump_ramping: 0.2
+
 # [kWh_th]
 heat_storage_per_heat_pump: 10
 
@@ -177,6 +180,9 @@ bev_charger_power: 11
 
 # available to system for flexible charging [kWh_el]
 bev_battery_size: 25
+
+# hourly demand per hour
+bev_ramping: 3
 
 # [hour of day UTC]
 bev_charge_end_hour: 6

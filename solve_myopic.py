@@ -80,6 +80,8 @@ def prepare_base_network(config):
                   bus0=f"{ct}-electricity",
                   bus1=f"{ct}-bev",
                   p_nom=config['bev_charger_power']*bevs*1e3,
+                  ramp_limit_up=config['bev_demand_yearly']/8760/config['bev_charger_power']*1e3*config['bev_ramping'],
+                  ramp_limit_down=config['bev_demand_yearly']/8760/config['bev_charger_power']*1e3*config['bev_ramping'],
                   carrier="bev_charger")
 
             n.add("Store",
@@ -105,6 +107,8 @@ def prepare_base_network(config):
                   bus0=f"{ct}-electricity",
                   bus1=f"{ct}-heat",
                   carrier="heat_pumps",
+                  ramp_limit_up=config['heat_pump_ramping'],
+                  ramp_limit_down=config['heat_pump_ramping'],
                   p_nom=config['heat_pump_power']*heat_pumps*1e3)
 
             n.add("Store",
