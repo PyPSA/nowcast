@@ -59,7 +59,7 @@
 	  <section id="intro">
 	  <h2>Introduction</h2>
 
-	  <p>This website simulates how a future fully-renewable power system
+	  <p>This website simulates how a future fully-renewable German power system
 	    would behave with today's demand and weather. Here is the actual wind and solar generation from the past 10 days in Germany:</p>
 	  <p><img class="wide" src="{{results_dir}}/today/{{days_fn[:-11]}}-today.png" /></p>
 	  <p>In the scenarios below the wind and solar generation is scaled up to
@@ -69,6 +69,7 @@ hydrogen storage and flexible demand is optimised to minimise costs.  <b>The mod
 	    storage is dispatched assuming a constant hydrogen value (e.g. 90 &euro;/MWh<sub>LHV</sub>).</p>
 	  <p><b>Warning:</b> This website is a thought-experiment for educational purposes, not a forecast. Please see <a href="#warnings">all other warnings</a>.</p>
 	  <p>Currently the website only works for Germany as an island system. <a href="https://github.com/PyPSA/nowcast/issues">Additional features</a> will follow soon!</p>
+	  <p>You may also be interested in our <b>sister websites</b>: <a href="https://model.energy/">model.energy for simulating baseload renewable electricity anywhere in the world</a>, <a href="https://model.energy/products/">model.energy for green hydrogen-derived products</a> and an <a href="https://model.energy/scenarios/">interface to run the detailed European model PyPSA-Eur</a>.</p>
 	    </section>
             <section id="explore">
 	      <h2>Explore scenarios</h2>
@@ -90,7 +91,7 @@ hydrogen storage and flexible demand is optimised to minimise costs.  <b>The mod
 	    <li>Wind is very helpful in high latitudes to get through the winter periods when the sun shines less.
 	    </li>
 	    <li>There are multi-day periods with low wind and solar output. To bridge these, batteries, pumped hydroelectricity and short-term demand-side management are too expensive. Longer-term storage (in this example: hydrogen) can help despite the high losses, since it is used infrequently.</li>
-	    <li>Foresight of 24 hours is sufficient to dispatch the system. Long-term storage can be dispatched using heuristics for the value of hydrogen. This is similar to how water values are used to dispatch hydroelectricity-dominated systems today.</li>
+	    <li>Foresight of 24 hours is sufficient to dispatch the system. Long-term storage can be dispatched using heuristics for the value of hydrogen. This is similar to how water values are used to dispatch hydroelectricity-dominated systems today. See the 2024 preprint <a href="https://arxiv.org/abs/2407.21409">Price formation without fuel costs: the interaction of elastic demand with storage bidding</a> for more details on price formation and the dispatch of long-term storage.</li>
 	    <li>Prices are often set by the value of hydrogen, both when hydrogen turbines are price-setting as supply and when hydrogen electrolysers are price-setting as demand.</li>
 	    <li>Prices drop to zero in rare situations when wind and solar supply exceeds all flexible demand.</li>
 	    <li>Market prices are more volatile than prices today on a day-to-day basis, but also don't behave radically differently. Prices in this systems do not depend on world markets for fossil fuels.</li>
@@ -111,6 +112,7 @@ hydrogen storage and flexible demand is optimised to minimise costs.  <b>The mod
 	  <p>A small heat storage is modelled to mimic either the thermal inertia in buildings or a small water tank thermal energy storage. This means the heat pump can adapt its demand somewhat to electricity prices.</p>
 	  <p>In the default setting, battery electric vehicles are only allowed to charge between 1900 and 0700. Within this time they charge based on the electricity price.</p>
 	  <p>Hydrogen demand is assumed to be constant in time.</p>
+	  <p>See the 2024 preprint <a href="https://arxiv.org/abs/2407.21409">Price formation without fuel costs: the interaction of elastic demand with storage bidding</a> for more details on price formation and the dispatch of long-term storage.</p>
 	  <p>Planned additional features are listed on the <a href="https://github.com/PyPSA/nowcast/issues">GitHub issue tracker</a>.</p>
 	    </section>
 	    <section id="warnings">
