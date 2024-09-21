@@ -164,7 +164,7 @@ heat_pump_power: 5
 heat_pump_demand_yearly: 20
 
 # [p.u. of nominal/h]
-heat_pump_ramping: 0.2
+heat_pump_ramping: 0.4
 
 # [kWh_th]
 heat_storage_per_heat_pump: 10
