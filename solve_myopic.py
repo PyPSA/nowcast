@@ -435,8 +435,8 @@ def solve_all(config):
                       config,
                       solver_name)
 
-    n.export_to_netcdf(fn,
-                       float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
+        n.export_to_netcdf(fn,
+                           float32=True, compression={'zlib': True, "complevel":9, "least_significant_digit":5})
 
 
 def gurobi_present():
