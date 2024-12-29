@@ -72,6 +72,11 @@ historical_capacities:
       pv : 80.7
       offshore : 8.4
       hydro: 4.9
+    2024-12-23:
+      onshore: 63.2
+      pv: 97.6
+      offshore: 9.2
+      hydro: 6.4
 
 #https://www.gesetze-im-internet.de/eeg_2014/__4.html
 targets:
