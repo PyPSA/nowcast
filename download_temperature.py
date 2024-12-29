@@ -91,7 +91,8 @@ def get_all_data(config):
                                   historic_days[-1].date(),
                                   historic=True)
         temperature = pd.concat([temperature,historic])
-        dates_to_process = date_index.difference(historic_days)
+        already = pd.Index(temperature.index.date).unique()
+        dates_to_process = date_index.difference(already)
 
     print(f"dates_to_process: {dates_to_process}")
 
